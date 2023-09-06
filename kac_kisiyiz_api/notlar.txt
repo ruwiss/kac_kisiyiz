@@ -1,0 +1,58 @@
+npm init -y
+npm install typescript -D
+npx tsc --init
+
+npm i @types/isim -D
+
+settings
+- id
+- name
+- attr
+ {updateRequired {status:bool, url:string}, surveyLimit:int}
+
+users
+- id
+- mail
+- name
+- password
+- money
+- onesignalId
+
+bank
+- id
+- userId
+- nameSurname
+- bankName
+- iban
+
+categories
+- id
+- name
+- icon
+
+surveys
+- id
+- categoryId
+- userId
+- title
+- content
+- image
+- ch1
+- ch2
+- adLink
+- isRewarded
+
+pending
+- id
+- surveyId
+- userId
+- category
+- title
+- content
+
+
+
+Kai kozhong
+
+
+arch linux gnome
