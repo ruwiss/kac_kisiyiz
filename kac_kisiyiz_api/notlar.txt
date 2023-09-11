@@ -3,6 +3,7 @@ npm install typescript -D
 npx tsc --init
 
 npm i @types/isim -D
+npx ts-node ./src/index.ts
 
 settings
 - id
@@ -41,6 +42,7 @@ surveys
 - ch2
 - adLink
 - isRewarded
+- isPending
 
 pending
 - id
@@ -50,6 +52,15 @@ pending
 - title
 - content
 
+rewarded
+- id
+- surveyId
+- reward
+
+voted
+- id
+- surveyId
+- userId
 
 
 Kai kozhong
