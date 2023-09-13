@@ -2,6 +2,8 @@ import express, { Application } from "express";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import mysql from "mysql";
+import verifyToken from "./middleWares/verifyToken";
+import tokenRouter from "./routers/tokenRouter";
 
 export class Connector {
   app: Application;
@@ -11,24 +13,25 @@ export class Connector {
     dotenv.config();
     this.app = express();
     this.middlewares();
-    this.listen().then(() =>
-      this.connectMysql().then(async () => {
-        await this.createTables();
-        await this.setDefaultValues();
-      })
-    );
   }
 
   middlewares() {
+    this.app.set("api_secret_key", process.env.API_SECRET_KEY);
+    this.app.set("token_expire", process.env.TOKEN_EXPIRE);
     this.app.use(morgan("dev"));
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(express.json());
+    this.app.use("/api", verifyToken);
   }
 
-  private async listen() {
+  listen() {
     const port = process.env.PORT;
     this.app.listen(port);
     console.log(`http://localhost:${port}`);
+    this.connectMysql().then(async () => {
+      await this.createTables();
+      await this.setDefaultValues();
+    });
   }
 
   private async connectMysql() {
