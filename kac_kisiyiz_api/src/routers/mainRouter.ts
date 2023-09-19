@@ -41,6 +41,42 @@ function routes(router: Router, root: Connector): Router {
     });
   });
 
+  router.get("/surveys", (req, res) => {
+    const [args, keys] = helper.getArgsByMethod(req);
+    let sql: string;
+    if (keys.includes("voted")) {
+      sql = `SELECT s.id, s.categoryId, c.name AS category, u.name AS userName, s.userId, s.title, s.image, s.ch1, s.ch2
+      FROM surveys s
+      LEFT JOIN categories c ON s.categoryId = c.id
+      LEFT JOIN users u ON s.userId = u.id
+      INNER JOIN voted v ON s.id = v.surveyId AND v.userId = ?
+      WHERE s.content IS NOT NULL
+      ORDER BY s.id DESC
+      LIMIT 20;`;
+    } else {
+      sql = `SELECT s.*,  c.name AS category, u.name AS userName
+      FROM surveys s
+      LEFT JOIN voted v ON s.id = v.surveyId AND v.userId = ?
+      LEFT JOIN categories c ON s.categoryId = c.id
+      LEFT JOIN users u ON s.userId = u.id
+      WHERE v.id IS NULL AND s.isPending = 0
+      ORDER BY s.id DESC
+      LIMIT 20;`;
+    }
+    root.con.query(sql, [req.body.user.id], (err, result) => {
+      if (err) return helper.sendError(err, res);
+      res.json(result);
+    });
+  });
+
+  router.get("/categories", (req, res) => {
+    const sql = `SELECT * FROM categories`;
+    root.con.query(sql, (err, result) => {
+      if (err) return helper.sendError(err, res);
+      res.send(result);
+    });
+  });
+
   router.get("/categoryData", (req, res) => {
     const [args, keys] = helper.getArgsByMethod(req);
     if (!keys.includes("id")) return helper.sendErrorMissingData(res);

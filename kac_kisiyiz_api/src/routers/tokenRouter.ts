@@ -43,9 +43,9 @@ function tokenRouter(router: Router, root: Connector): Router {
       const values = [args.mail, args.password, args.name];
       root.con.query(insertSql, values, (err, fields) => {
         if (err) res.status(502).json({ msg: err.message });
-        console.log(fields);
         return res.json({
           msg: "Kayıt işlemi başarılı.",
+          name: args.name,
           token: helper.createUserToken(
             {
               id: fields.insertId,
@@ -72,6 +72,7 @@ function tokenRouter(router: Router, root: Connector): Router {
       if (result[0]) {
         return res.json({
           msg: "Giriş Başarılı.",
+          name: result[0].name,
           token: helper.createUserToken(result[0], req),
         });
       }

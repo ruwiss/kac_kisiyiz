@@ -1,4 +1,3 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kac_kisiyiz/locator.dart';
@@ -6,7 +5,6 @@ import 'package:kac_kisiyiz/pages/auth_page.dart';
 import 'package:kac_kisiyiz/pages/home_page/home_page.dart';
 import 'package:kac_kisiyiz/services/providers/home_provider.dart';
 import 'package:provider/provider.dart';
-import 'firebase_options.dart';
 
 void main() async {
   SystemChrome.setSystemUIOverlayStyle(
@@ -17,7 +15,6 @@ void main() async {
   );
   WidgetsFlutterBinding.ensureInitialized();
   setupLocator();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider<HomeProvider>(

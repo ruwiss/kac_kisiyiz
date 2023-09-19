@@ -3,6 +3,7 @@ import 'package:kac_kisiyiz/services/models/survey_model.dart';
 import 'package:kac_kisiyiz/utils/colors.dart';
 import 'package:kac_kisiyiz/utils/consts.dart';
 import 'package:kac_kisiyiz/utils/images.dart';
+import 'package:kac_kisiyiz/widgets/features/home/survey_members_chip.dart';
 import 'package:kac_kisiyiz/widgets/global/action_button.dart';
 
 class SurveyWidget extends StatelessWidget {
@@ -49,6 +50,8 @@ class SurveyWidget extends StatelessWidget {
             child: Column(
               children: [
                 Text.rich(
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 4,
                   textAlign: TextAlign.center,
                   TextSpan(
                     style: TextStyle(
@@ -66,7 +69,7 @@ class SurveyWidget extends StatelessWidget {
                 if (!small) ...[
                   const SizedBox(height: 12),
                   Text(
-                    surveyModel.content,
+                    surveyModel.content!,
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontWeight: FontWeight.w500),
                   ),
@@ -74,16 +77,17 @@ class SurveyWidget extends StatelessWidget {
               ],
             ),
           ),
-          if (!small) ...[
-            const Expanded(child: SizedBox()),
-            /* Row(
+          const Expanded(child: SizedBox()),
+          /* Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SurveyMembersChip(num: surveyModel.choice1, positive: false),
               const SizedBox(width: 20),
               SurveyMembersChip(num: surveyModel.choice2),
             ],
-          ), */
+          ),
+          const Expanded(child: SizedBox()), */
+          if (!small) ...[
             const Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [

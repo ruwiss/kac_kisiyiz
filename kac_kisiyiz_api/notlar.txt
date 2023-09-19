@@ -71,3 +71,7 @@ JWT
 Fold All (Ctrl+K Ctrl+0)
 
 Unfold All (Ctrl+K Ctrl+J)
+
+
+Kategoriler
+{"Kategoriler": "", "80'ler": "", "90'lar": "", "Aile": "", "Alışkanlık": "", "Alışveriş": "", "Arabalar": "", "Arkadaşlar": "", "Astroloji": "", "Basketbol": "", "Basılı Yayın": "", "Batıl İnançlar": "", "Bebek Çocuk": "", "Beslenme": "", "Borsa": "", "Cinsellik": "", "Dizi": "", "Doğa": "", "Döviz": "", "Dünya": "", "Ekonomi": "", "Estetik": "", "Ev Hali": "", "Eğitim": "", "Eğlence": "", "Felsefe": "", "Fotoğraf": "", "Futbol": "", "Futbol Magazin": "", "Futbol Mizah": "", "Geri Dönüşüm": "", "Gündem": "", "Günlük": "", "Güzellik": "", "Hastalıklar": "", "Hava Durumu": "", "Hayvanlar": "", "Hepsi": "", "Hobiler": "", "Huylar": "", "İndirim": "", "Kadınlar": "", "Kediler": "", "Keyif": "", "Kitaplar": "", "Kişisel Bakım": "", "Kişisel Gelişim": "", "Klasik Oyun": "", "Klişeler": "", "Kozmetik": "", "Kripto Para": "", "Kutlamalar": "", "Köpekler": "", "Magazin": "", "Makyaj": "", "Meslek": "", "Mobil Oyunlar": "", "Moda": "", "Motor Sporları": "", "Müzik": "", "Otomotiv": "", "Oyuncular": "", "Para": "", "Pilates": "", "Psikoloji": "", "Resim": "", "Sanat": "", "Sağlık": "", "Sağlık Hizmetleri": "", "Seyehat": "", "Sinema": "", "Sosyal Medya": "", "Spor": "", "Tabular": "", "Takıntılar": "", "Teknoloji": "", "Televizyon": "", "Trendler": "", "Ulaşım": "", "Yarışmalar": "", "Yatırım": "", "Yaşam": "", "Yemek": "", "Yolculuk": "", "YouTube": "", "Çalışanlar": "", "İletişim": "", "İlişkiler": "", "İçecek": "", "İş Hayatı": "", "Şans": "", "Şehirler": ""};

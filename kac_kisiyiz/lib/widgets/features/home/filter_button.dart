@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:kac_kisiyiz/utils/colors.dart';
 import 'package:kac_kisiyiz/utils/consts.dart';
 
-enum Filters { yeniler, katilimlar }
+enum Filters { yeniler, katilimlar, category}
 
 class FilterButton extends StatelessWidget {
   const FilterButton(
       {super.key,
+      required this.text,
       required this.filter,
       required this.currentFilter,
       this.onTap});
 
+  final String text;
   final Function(Filters)? onTap;
   final Filters filter;
   final Filters currentFilter;
@@ -35,7 +37,7 @@ class FilterButton extends StatelessWidget {
               )
             : null,
         child: Text(
-          filter == Filters.yeniler ? "Yeniler" : "Katılımlar",
+          text,
           style: TextStyle(
               fontWeight: currentFilter == filter ? FontWeight.w500 : null,
               fontSize: 15),

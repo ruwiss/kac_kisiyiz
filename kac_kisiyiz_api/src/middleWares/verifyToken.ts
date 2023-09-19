@@ -2,7 +2,7 @@ import jwt, { Secret } from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 
 export default (req: Request, res: Response, next: NextFunction) => {
-  const token = req.headers["x-access-token"] as string;
+  const token = req.get("x-access-token");
   if (!token) return res.status(401).send("Token bulunmamaktadır.");
   jwt.verify(
     token,

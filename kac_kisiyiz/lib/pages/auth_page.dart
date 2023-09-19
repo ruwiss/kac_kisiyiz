@@ -1,10 +1,12 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:kac_kisiyiz/locator.dart';
+import 'package:kac_kisiyiz/services/backend/auth_service.dart';
 import 'package:kac_kisiyiz/utils/consts.dart';
 import 'package:kac_kisiyiz/utils/images.dart';
 import 'package:kac_kisiyiz/widgets/features/auth/auth_action_buttons.dart';
-import 'package:kac_kisiyiz/widgets/global/input_widget.dart';
+import 'package:kac_kisiyiz/widgets/global/input_widgets/input_field.dart';
 import 'package:kac_kisiyiz/widgets/global/action_button.dart';
 import 'package:kac_kisiyiz/widgets/global/title_widget.dart';
 
@@ -24,6 +26,8 @@ class _AuthPageState extends State<AuthPage> {
 
   @override
   Widget build(BuildContext context) {
+    _tMail.text = "omer670067@gmail.com";
+    _tPass.text = "1234567890";
     return SafeArea(
       child: Scaffold(
         body: Center(
@@ -67,10 +71,13 @@ class _AuthPageState extends State<AuthPage> {
                     ),
                     const SizedBox(height: 5),
                     if (_authType == AuthType.register)
-                      InputWidget(controller: _tName, hintText: "Ad Soyadınız"),
-                    InputWidget(
-                        controller: _tMail, hintText: "Email Adresiniz"),
-                    InputWidget(controller: _tPass, hintText: "Şifreniz"),
+                      InputField(controller: _tName, hintText: "Ad Soyadınız"),
+                    InputField(controller: _tMail, hintText: "Email Adresiniz"),
+                    InputField(
+                      controller: _tPass,
+                      hintText: "Şifreniz",
+                      obscureText: true,
+                    ),
                     if (_authType == AuthType.login)
                       Align(
                         alignment: Alignment.centerRight,
@@ -89,13 +96,21 @@ class _AuthPageState extends State<AuthPage> {
                     if (_authType == AuthType.login)
                       ActionButton(
                         text: "Devam et",
-                        onPressed: () =>
-                            Navigator.of(context).pushReplacementNamed("/home"),
+                        onPressed: () => locator.get<AuthService>().auth(
+                            context: context,
+                            isLogin: true,
+                            mail: _tMail.text,
+                            password: _tPass.text),
                       ),
                     if (_authType == AuthType.register)
                       ActionButton(
                         text: "Aramıza Katıl",
-                        onPressed: () {},
+                        onPressed: () => locator.get<AuthService>().auth(
+                            context: context,
+                            isLogin: false,
+                            name: _tName.text,
+                            mail: _tMail.text,
+                            password: _tPass.text),
                       ),
                     const SizedBox(height: 30)
                   ],

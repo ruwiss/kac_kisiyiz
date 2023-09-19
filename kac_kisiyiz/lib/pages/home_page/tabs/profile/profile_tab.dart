@@ -1,84 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:kac_kisiyiz/locator.dart';
+import 'package:kac_kisiyiz/pages/home_page/tabs/profile/create_survey.dart';
+import 'package:kac_kisiyiz/pages/home_page/tabs/profile/settings.dart';
+import 'package:kac_kisiyiz/services/backend/auth_service.dart';
 import 'package:kac_kisiyiz/utils/colors.dart';
 import 'package:kac_kisiyiz/utils/consts.dart';
 import 'package:kac_kisiyiz/utils/images.dart';
 
 class ProfileTab extends StatelessWidget {
   const ProfileTab({super.key});
-
-  void _showSettings(BuildContext context) {
-    Widget settingsItem(
-            {required String text, Function()? onTap, Color? color}) =>
-        Padding(
-          padding: const EdgeInsets.only(top: 15),
-          child: InkWell(
-            splashColor: KColors.primary.withOpacity(.15),
-            borderRadius: BorderRadius.circular(kBorderRadius - 5),
-            onTap: onTap,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(kBorderRadius - 5),
-                  border: Border.all(color: KColors.border, width: 2),
-                  color: color),
-              child: Text(
-                text,
-                style: const TextStyle(fontSize: 18),
-              ),
-            ),
-          ),
-        );
-
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(15),
-        height: 360,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Text(
-              "Ayarlar",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            settingsItem(text: "Ödeme Bilgileri", onTap: () {}),
-            settingsItem(text: "Gizlilik Sözleşmesi", onTap: () {}),
-            settingsItem(text: "Çıkış Yap", onTap: () {}),
-            settingsItem(
-                text: "Hesabımı Sil",
-                onTap: () => showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text("Emin misin?"),
-                        content:
-                            const Text("Hesabınız kalıcı olarak silinecektir."),
-                        actions: [
-                          ElevatedButton(
-                              onPressed: () => Navigator.of(context).pop(),
-                              child: const Text("İptal")),
-                          ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    Colors.redAccent.withOpacity(.6)),
-                            child: const Text(
-                              "Onayla",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                color: Colors.red.withOpacity(.2)),
-          ],
-        ),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -117,10 +47,10 @@ class ProfileTab extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         const SizedBox(height: 50),
-                        const Text(
-                          "Ömer G",
+                        Text(
+                          locator.get<AuthService>().resultData.name!,
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.w500),
                         ),
                         const SizedBox(height: 10),
@@ -133,7 +63,7 @@ class ProfileTab extends StatelessWidget {
                           borderRadius: BorderRadius.circular(kBorderRadius),
                           splashColor: Colors.white,
                           highlightColor: Colors.white,
-                          onTap: () {},
+                          onTap: () => showCreateSurveyBottomSheet(context),
                           child: Container(
                             alignment: Alignment.center,
                             padding: const EdgeInsets.all(8),
@@ -164,7 +94,7 @@ class ProfileTab extends StatelessWidget {
               top: 5,
               right: 10,
               child: IconButton(
-                onPressed: () => _showSettings(context),
+                onPressed: () => showSettingsBottomSheet(context),
                 icon: const Icon(
                   Icons.settings,
                   size: 30,

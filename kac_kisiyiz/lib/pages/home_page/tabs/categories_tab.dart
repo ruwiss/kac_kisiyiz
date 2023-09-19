@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:kac_kisiyiz/services/models/categories_model.dart';
+import 'package:kac_kisiyiz/locator.dart';
+import 'package:kac_kisiyiz/services/backend/content_service.dart';
+import 'package:kac_kisiyiz/services/providers/home_provider.dart';
 import 'package:kac_kisiyiz/utils/colors.dart';
 import 'package:kac_kisiyiz/utils/consts.dart';
+import 'package:provider/provider.dart';
 
 class CategoriesTab extends StatefulWidget {
   const CategoriesTab({super.key});
@@ -11,16 +14,11 @@ class CategoriesTab extends StatefulWidget {
 }
 
 class _CategoriesTabState extends State<CategoriesTab> {
-
-  late List<CategoryModel> _categories;
-
   @override
   void initState() {
-    _categories = List.generate(
-        20, (index) => CategoryModel.fromList(["Sağlık", 0xed36]));
+    locator.get<ContentService>().getCategories();
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -35,42 +33,49 @@ class _CategoriesTabState extends State<CategoriesTab> {
         ),
         Flexible(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: GridView(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 1 / .5,
-                  mainAxisSpacing: 35),
-              shrinkWrap: true,
-              physics: const BouncingScrollPhysics(),
-              children: _categories
-                  .map(
-                    (e) => InkWell(
-                      borderRadius: BorderRadius.circular(kBorderRadius),
-                      splashColor: KColors.primary.withOpacity(.1),
-                      onTap: () {},
-                      child: Column(
-                        children: [
-                          Icon(
-                            IconData(e.iconPoint, fontFamily: "MaterialIcons"),
-                            size: 50,
-                            color: Colors.black.withOpacity(.65),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Consumer<HomeProvider>(
+                builder: (context, value, child) => GridView(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 1 / 0.5,
+                    mainAxisSpacing: 35,
+                  ),
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                  children: value.categories
+                      .map(
+                        (e) => InkWell(
+                          borderRadius: BorderRadius.circular(kBorderRadius),
+                          splashColor: KColors.primary.withOpacity(0.1),
+                          onTap: () {
+                            value.setCurrentCategoryId(e.id!);
+                            value.setCurrentMenu(MenuItems.kackisiyiz);
+                          },
+                          child: Column(
+                            children: [
+                              Icon(
+                                IconData(e.iconPoint,
+                                    fontFamily: "MaterialIcons"),
+                                size: 50,
+                                color: Colors.black.withOpacity(0.65),
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                e.category,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 20,
+                                  color: Colors.black.withOpacity(0.8),
+                                ),
+                              )
+                            ],
                           ),
-                          const SizedBox(height: 10),
-                          Text(
-                            e.category,
-                            style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 20,
-                                color: Colors.black.withOpacity(.8)),
-                          )
-                        ],
-                      ),
-                    ),
-                  )
-                  .toList(),
-            ),
-          ),
+                        ),
+                      )
+                      .toList(),
+                ),
+              )),
         ),
         const SizedBox(height: 100)
       ],

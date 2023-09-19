@@ -1,17 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:kac_kisiyiz/utils/colors.dart';
 import 'package:kac_kisiyiz/utils/consts.dart';
+import 'package:kac_kisiyiz/widgets/global/input_widgets/input_container.dart';
 
-class InputWidget extends StatefulWidget {
-  const InputWidget({super.key, this.controller, required this.hintText});
+class InputField extends StatefulWidget {
+  const InputField(
+      {super.key,
+      this.controller,
+      required this.hintText,
+      this.obscureText = false,
+      this.isMultiline = false,
+      this.minLines = 1});
   final TextEditingController? controller;
   final String hintText;
+  final bool obscureText;
+  final bool isMultiline;
+  final int minLines;
 
   @override
-  State<InputWidget> createState() => _InputWidgetState();
+  State<InputField> createState() => _InputFieldState();
 }
 
-class _InputWidgetState extends State<InputWidget> {
+class _InputFieldState extends State<InputField> {
   final FocusNode _focusNode = FocusNode();
 
   @override
@@ -30,25 +40,8 @@ class _InputWidgetState extends State<InputWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(
-            color: _focusNode.hasFocus ? KColors.primary : KColors.border,
-            width: kBorderWidth),
-        boxShadow: !_focusNode.hasFocus
-            ? null
-            : [
-                BoxShadow(
-                  color: KColors.primary.withOpacity(.2),
-                  blurRadius: 4,
-                  offset: const Offset(3, 4), // Shadow position
-                ),
-              ],
-        borderRadius: BorderRadius.circular(kBorderRadius),
-      ),
+    return InputContainer(
+      focus: _focusNode.hasFocus,
       child: TextField(
         focusNode: _focusNode,
         controller: widget.controller,
@@ -56,6 +49,9 @@ class _InputWidgetState extends State<InputWidget> {
           fontSize: kFontSizeButton,
           fontWeight: FontWeight.w500,
         ),
+        minLines: widget.minLines,
+        maxLines: widget.isMultiline ? 5 : 1,
+        obscureText: widget.obscureText,
         decoration: InputDecoration(
           border: InputBorder.none,
           isDense: true,
