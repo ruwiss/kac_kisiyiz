@@ -11,6 +11,13 @@ class HomeProvider with ChangeNotifier {
 
   List<SurveyModel> surveys = [];
   List<SurveyModel> votedSurveys = [];
+  Map<int, List<SurveyModel>> categorySurveys = {};
+
+  bool surveyLoading = false;
+
+  void setLoading(bool v) {
+    surveyLoading = v;
+  }
 
   void setCurrentMenu(MenuItems item) {
     currentMenu = item;
@@ -19,6 +26,7 @@ class HomeProvider with ChangeNotifier {
 
   void setCategories(List<CategoryModel> items) {
     categories = items;
+    setLoading(false);
     notifyListeners();
   }
 
@@ -33,11 +41,19 @@ class HomeProvider with ChangeNotifier {
 
   void setSurveys(List<SurveyModel> list) {
     surveys = list;
+    setLoading(false);
     notifyListeners();
   }
 
   void setVotedSurveys(List<SurveyModel> list) {
     votedSurveys = list;
+    setLoading(false);
+    notifyListeners();
+  }
+
+  void setCategorySurveys(List<SurveyModel> list) {
+    categorySurveys[currentCategoryId] = list;
+    setLoading(false);
     notifyListeners();
   }
 }

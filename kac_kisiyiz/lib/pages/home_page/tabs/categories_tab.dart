@@ -51,6 +51,9 @@ class _CategoriesTabState extends State<CategoriesTab> {
                           onTap: () {
                             value.setCurrentCategoryId(e.id!);
                             value.setCurrentMenu(MenuItems.kackisiyiz);
+                            locator
+                                .get<ContentService>()
+                                .getSurveys(category: true);
                           },
                           child: Column(
                             children: [

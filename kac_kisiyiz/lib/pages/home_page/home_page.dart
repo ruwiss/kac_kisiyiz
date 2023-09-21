@@ -6,6 +6,7 @@ import 'package:kac_kisiyiz/pages/home_page/tabs/profile/profile_tab.dart';
 import 'package:kac_kisiyiz/services/backend/content_service.dart';
 import 'package:kac_kisiyiz/services/models/survey_model.dart';
 import 'package:kac_kisiyiz/services/providers/home_provider.dart';
+import 'package:kac_kisiyiz/utils/colors.dart';
 import 'package:kac_kisiyiz/utils/images.dart';
 import 'package:kac_kisiyiz/widgets/features/home/filter_button.dart';
 import 'package:kac_kisiyiz/widgets/global/bottom_menu.dart';
@@ -47,11 +48,19 @@ class _HomePageState extends State<HomePage> {
         body: Stack(
           children: [
             Consumer<HomeProvider>(
-              builder: (context, value, child) => switch (value.currentMenu) {
-                (MenuItems.kackisiyiz) => _kacKisiyizTab(value),
-                (MenuItems.kategoriler) => const CategoriesTab(),
-                (_) => const ProfileTab()
-              },
+              builder: (context, value, child) => Column(
+                children: [
+                  if (value.surveyLoading)
+                    const LinearProgressIndicator(color: KColors.primary),
+                  Expanded(
+                    child: switch (value.currentMenu) {
+                      (MenuItems.kackisiyiz) => _kacKisiyizTab(value),
+                      (MenuItems.kategoriler) => const CategoriesTab(),
+                      (_) => const ProfileTab()
+                    },
+                  ),
+                ],
+              ),
             ),
             Positioned(bottom: 10, right: 33, left: 33, child: BottomMenu())
           ],
@@ -96,61 +105,76 @@ class _HomePageState extends State<HomePage> {
         ),
         const SizedBox(height: 15),
         Consumer<HomeProvider>(
-          builder: (context, value, child) => Container(
-            child: _currentFilter != Filters.katilimlar
-                ? Expanded(
-                    child: Swiper(
-                      itemCount: value.surveys.length + 1,
-                      scrollDirection: Axis.vertical,
-                      loop: false,
-                      physics: const BouncingScrollPhysics(),
-                      scale: 0.9,
-                      itemBuilder: (context, index) => index !=
-                              value.surveys.length
-                          ? SurveyWidget(
-                              small: _currentFilter == Filters.katilimlar,
-                              surveyModel: value.surveys[index],
-                            )
-                          : Container(
-                              decoration: const BoxDecoration(
-                                image: DecorationImage(
-                                  image: AssetImage(KImages.profilePattern),
-                                  opacity: .1,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              alignment: Alignment.center,
-                              child: const Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 65),
-                                child: InputContainer(
-                                  child: Text(
-                                    "Bu günlük daha fazla ankete katılamazsınız.",
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ),
-                            ),
-                    ),
-                  )
-                : Expanded(
-                    child: ListView.builder(
-                      itemCount: value.votedSurveys.length,
-                      shrinkWrap: true,
-                      physics: const BouncingScrollPhysics(),
-                      itemBuilder: (context, index) => Container(
-                        height: 330,
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: SurveyWidget(
-                          small: _currentFilter == Filters.katilimlar,
-                          surveyModel: value.votedSurveys[index],
+          builder: (context, value, child) {
+            final List<SurveyModel> items = switch (_currentFilter) {
+              Filters.yeniler => value.surveys,
+              Filters.katilimlar => value.votedSurveys,
+              Filters.category =>
+                value.categorySurveys[value.currentCategoryId] ?? []
+            };
+            return Container(
+              child: _currentFilter != Filters.katilimlar
+                  ? Expanded(
+                      child: Swiper(
+                        itemCount: items.length + 1,
+                        scrollDirection: Axis.vertical,
+                        loop: false,
+                        physics: const BouncingScrollPhysics(),
+                        scale: 0.9,
+                        itemBuilder: (context, index) => items.isEmpty
+                            ? _infoWidget(
+                                "Katılabileceğiniz bir anket bulunamadı.")
+                            : index != items.length
+                                ? SurveyWidget(
+                                    small: _currentFilter == Filters.katilimlar,
+                                    surveyModel: items[index],
+                                  )
+                                : _infoWidget(
+                                    "Bu günlük daha fazla ankete katılamazsınız."),
+                      ),
+                    )
+                  : Expanded(
+                      child: ListView.builder(
+                        itemCount: items.length,
+                        shrinkWrap: true,
+                        physics: const BouncingScrollPhysics(),
+                        itemBuilder: (context, index) => Container(
+                          height: 330,
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: SurveyWidget(
+                            small: _currentFilter == Filters.katilimlar,
+                            surveyModel: items[index],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-          ),
+            );
+          },
         ),
         const SizedBox(height: 100),
       ],
+    );
+  }
+
+  Container _infoWidget(String text) {
+    return Container(
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(KImages.profilePattern),
+          opacity: .1,
+          fit: BoxFit.cover,
+        ),
+      ),
+      alignment: Alignment.center,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 65),
+        child: InputContainer(
+          child: Text(
+            text,
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ),
     );
   }
 }
