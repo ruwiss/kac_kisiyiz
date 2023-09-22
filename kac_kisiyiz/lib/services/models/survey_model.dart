@@ -22,8 +22,8 @@ class SurveyModel {
   final String title;
   final String? content;
   final String imageUrl;
-  final int choice1;
-  final int choice2;
+   int choice1;
+   int choice2;
   final String? adLink;
   final int? isRewarded;
 

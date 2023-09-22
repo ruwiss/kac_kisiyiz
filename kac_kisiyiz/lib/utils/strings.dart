@@ -7,4 +7,5 @@ class KStrings {
 
   static const String fetchCategoriesUrl = "$hostApi/categories";
   static const String fetchSurveys = "$hostApi/surveys";
+  static const String patchSurvey = "$hostApi/surveyData";
 }

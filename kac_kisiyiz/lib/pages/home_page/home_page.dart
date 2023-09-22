@@ -121,32 +121,38 @@ class _HomePageState extends State<HomePage> {
                         loop: false,
                         physics: const BouncingScrollPhysics(),
                         scale: 0.9,
-                        itemBuilder: (context, index) => items.isEmpty
-                            ? _infoWidget(
-                                "Katılabileceğiniz bir anket bulunamadı.")
-                            : index != items.length
-                                ? SurveyWidget(
-                                    small: _currentFilter == Filters.katilimlar,
-                                    surveyModel: items[index],
-                                  )
-                                : _infoWidget(
-                                    "Bu günlük daha fazla ankete katılamazsınız."),
+                        itemBuilder: (context, index) => value.surveyLoading
+                            ? _infoWidget("Bekleyiniz..")
+                            : items.isEmpty
+                                ? _infoWidget(
+                                    "Katılabileceğiniz bir anket bulunamadı.")
+                                : index != items.length
+                                    ? SurveyWidget(
+                                        small: _currentFilter ==
+                                            Filters.katilimlar,
+                                        surveyModel: items[index],
+                                      )
+                                    : _infoWidget(
+                                        "Bu günlük daha fazla ankete katılamazsınız."),
                       ),
                     )
                   : Expanded(
-                      child: ListView.builder(
-                        itemCount: items.length,
-                        shrinkWrap: true,
-                        physics: const BouncingScrollPhysics(),
-                        itemBuilder: (context, index) => Container(
-                          height: 330,
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: SurveyWidget(
-                            small: _currentFilter == Filters.katilimlar,
-                            surveyModel: items[index],
-                          ),
-                        ),
-                      ),
+                      child: items.isEmpty
+                          ? _infoWidget("Henüz bir ankete katılmadınız.")
+                          : ListView.builder(
+                              itemCount: items.length,
+                              shrinkWrap: true,
+                              physics: const BouncingScrollPhysics(),
+                              itemBuilder: (context, index) => Container(
+                                height: 330,
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8),
+                                child: SurveyWidget(
+                                  small: _currentFilter == Filters.katilimlar,
+                                  surveyModel: items[index],
+                                ),
+                              ),
+                            ),
                     ),
             );
           },

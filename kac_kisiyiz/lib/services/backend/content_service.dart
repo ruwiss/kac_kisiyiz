@@ -4,6 +4,7 @@ import 'package:kac_kisiyiz/services/models/categories_model.dart';
 import 'package:kac_kisiyiz/services/models/survey_model.dart';
 import 'package:kac_kisiyiz/services/providers/home_provider.dart';
 import 'package:kac_kisiyiz/utils/strings.dart';
+import 'package:kac_kisiyiz/widgets/global/survey_widget.dart';
 
 class ContentService {
   final httpService = HttpService();
@@ -35,7 +36,8 @@ class ContentService {
       homeProvider.setLoading(true);
       data = {"voted": true};
     } else if (category) {
-      if (homeProvider.categorySurveys.isNotEmpty) return;
+      if (homeProvider.categorySurveys
+          .containsKey(homeProvider.currentCategoryId)) return;
       homeProvider.setLoading(true);
       data = {"categoryId": homeProvider.currentCategoryId};
     } else {
@@ -51,10 +53,25 @@ class ContentService {
       if (voted) {
         homeProvider.setVotedSurveys(items);
       } else if (category) {
+        print(items.length);
         homeProvider.setCategorySurveys(items);
       } else {
         homeProvider.setSurveys(items);
       }
+    }
+  }
+
+  Future voteSurvey(
+      {required SurveyModel surveyModel, required SurveyChoices choice}) async {
+    final homeProvier = locator.get<HomeProvider>();
+
+    final response = await httpService.request(
+        url: KStrings.patchSurvey,
+        method: HttpMethod.patch,
+        data: {"id": surveyModel.id, "vote": choice.name});
+
+    if (response != null && response.statusCode == 200) {
+      homeProvier.voteSurvey(surveyModel, choice);
     }
   }
 }

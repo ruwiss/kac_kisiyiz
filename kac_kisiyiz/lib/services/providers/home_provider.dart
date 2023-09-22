@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kac_kisiyiz/services/models/categories_model.dart';
 import 'package:kac_kisiyiz/services/models/survey_model.dart';
+import 'package:kac_kisiyiz/widgets/global/survey_widget.dart';
 
 enum MenuItems { kackisiyiz, kategoriler, profilim }
 
@@ -55,5 +56,22 @@ class HomeProvider with ChangeNotifier {
     categorySurveys[currentCategoryId] = list;
     setLoading(false);
     notifyListeners();
+  }
+
+  void voteSurvey(SurveyModel surveyModel, SurveyChoices choice) {
+    if (choice == SurveyChoices.ch1) surveyModel.choice1++;
+    if (choice == SurveyChoices.ch2) surveyModel.choice2++;
+
+    votedSurveys.add(surveyModel);
+
+    if (categorySurveys.containsKey(surveyModel.id)) {
+      categorySurveys.remove(surveyModel.id);
+    }
+
+    notifyListeners();
+  }
+
+  bool isVotedSurvey(int id) {
+    return votedSurveys.indexWhere((element) => element.id == id) != -1;
   }
 }

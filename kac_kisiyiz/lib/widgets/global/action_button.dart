@@ -17,43 +17,37 @@ class ActionButton extends StatefulWidget {
 }
 
 class _ActionButtonState extends State<ActionButton> {
-  bool _tapAnimation = false;
-
-  void _setTapAnimation(bool val) => setState(() => _tapAnimation = val);
-
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: widget.onPressed,
-      onTapDown: (_) => _setTapAnimation(true),
-      onTapUp: (_) => _setTapAnimation(false),
-      onTapCancel: () => _setTapAnimation(false),
-      borderRadius: BorderRadius.circular(kBorderRadius),
-      child: Container(
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: widget.outlined ? Colors.white : KColors.primary,
-          borderRadius: BorderRadius.circular(kBorderRadius),
-          border: widget.outlined
-              ? Border.all(color: KColors.disabled, width: 2)
-              : null,
-          boxShadow: const [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 4,
-              offset: Offset(3, 4), // Shadow position
-            ),
-          ],
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-        child: Text(
-          widget.text,
-          style: TextStyle(
+    final rippleColor = widget.outlined ? Colors.grey.shade200 : Colors.white24;
+    final borderRadius = BorderRadius.circular(kBorderRadius);
+    return Material(
+      elevation: 2.0,
+      borderRadius: borderRadius,
+      child: InkWell(
+        onTap: widget.onPressed,
+        splashColor: rippleColor,
+        highlightColor: rippleColor,
+        borderRadius: borderRadius,
+        child: Ink(
+          decoration: BoxDecoration(
+            color: widget.outlined ? Colors.white : KColors.primary,
+            borderRadius: borderRadius,
+            border: widget.outlined
+                ? Border.all(color: KColors.disabled, width: 2)
+                : null,
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+          child: Text(
+            widget.text,
+            textAlign: TextAlign.center,
+            style: TextStyle(
               color: widget.outlined ? Colors.black87 : Colors.white,
-              fontSize:
-                  _tapAnimation ? kFontSizeButton + 1.5 : kFontSizeButton + 2,
+              fontSize: kFontSizeButton + 2,
               letterSpacing: kLetterSpacing,
-              fontWeight: FontWeight.bold),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
       ),
     );

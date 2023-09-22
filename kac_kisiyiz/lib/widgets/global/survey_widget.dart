@@ -1,16 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:kac_kisiyiz/locator.dart';
+import 'package:kac_kisiyiz/services/backend/content_service.dart';
 import 'package:kac_kisiyiz/services/models/survey_model.dart';
+import 'package:kac_kisiyiz/services/providers/home_provider.dart';
 import 'package:kac_kisiyiz/utils/colors.dart';
 import 'package:kac_kisiyiz/utils/consts.dart';
 import 'package:kac_kisiyiz/utils/images.dart';
 import 'package:kac_kisiyiz/widgets/features/home/survey_members_chip.dart';
 import 'package:kac_kisiyiz/widgets/global/action_button.dart';
+import 'package:provider/provider.dart';
+
+enum SurveyChoices { ch1, ch2 }
 
 class SurveyWidget extends StatelessWidget {
   const SurveyWidget(
       {super.key, required this.surveyModel, this.small = false});
   final SurveyModel surveyModel;
   final bool small;
+
+  void _voteSurvey(SurveyChoices ch) {
+    locator
+        .get<ContentService>()
+        .voteSurvey(surveyModel: surveyModel, choice: ch);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,25 +90,52 @@ class SurveyWidget extends StatelessWidget {
             ),
           ),
           const Expanded(child: SizedBox()),
-          /* Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SurveyMembersChip(num: surveyModel.choice1, positive: false),
-              const SizedBox(width: 20),
-              SurveyMembersChip(num: surveyModel.choice2),
-            ],
-          ),
-          const Expanded(child: SizedBox()), */
-          if (!small) ...[
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ActionButton.outlined(text: "Yokum"),
-                ActionButton(text: "Burdayım!")
-              ],
-            ),
-            const SizedBox(height: 5)
-          ],
+          Consumer<HomeProvider>(
+            builder: (context, value, child) {
+              final bool isVoted = value.isVotedSurvey(surveyModel.id);
+              return Expanded(
+                child: Column(
+                  children: [
+                    AnimatedSwitcher(
+                        duration: const Duration(seconds: 1),
+                        child: isVoted
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SurveyMembersChip(
+                                      num: surveyModel.choice1,
+                                      positive: false),
+                                  const SizedBox(width: 30),
+                                  SurveyMembersChip(num: surveyModel.choice2),
+                                ],
+                              )
+                            : const SizedBox()),
+                    const Expanded(child: SizedBox()),
+                    AnimatedSwitcher(
+                        duration: const Duration(seconds: 1),
+                        child: !isVoted && !small
+                            ? Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  ActionButton.outlined(
+                                    text: "Yokum",
+                                    onPressed: () =>
+                                        _voteSurvey(SurveyChoices.ch1),
+                                  ),
+                                  ActionButton(
+                                    text: "Burdayım!",
+                                    onPressed: () =>
+                                        _voteSurvey(SurveyChoices.ch2),
+                                  )
+                                ],
+                              )
+                            : const SizedBox()),
+                  ],
+                ),
+              );
+            },
+          )
         ],
       ),
     );
