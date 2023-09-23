@@ -22,10 +22,10 @@ class SurveyModel {
   final String title;
   final String? content;
   final String imageUrl;
-   int choice1;
-   int choice2;
+  int choice1;
+  int choice2;
   final String? adLink;
-  final int? isRewarded;
+  final double? isRewarded;
 
   SurveyModel.fromJson(Map json)
       : id = json['id'],
@@ -39,5 +39,7 @@ class SurveyModel {
         choice1 = json['ch1'],
         choice2 = json['ch2'],
         adLink = json['adLink'],
-        isRewarded = json['isRewarded'];
+        isRewarded = json['isRewarded'].runtimeType == int
+            ? (json['isRewarded'] as int).toDouble()
+            : json['isRewarded'];
 }

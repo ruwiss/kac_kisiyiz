@@ -1,5 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:kac_kisiyiz/locator.dart';
+import 'package:kac_kisiyiz/services/backend/auth_service.dart';
 import 'package:kac_kisiyiz/services/backend/http_service.dart';
+import 'package:kac_kisiyiz/services/functions/utils.dart';
 import 'package:kac_kisiyiz/services/models/categories_model.dart';
 import 'package:kac_kisiyiz/services/models/survey_model.dart';
 import 'package:kac_kisiyiz/services/providers/home_provider.dart';
@@ -53,7 +56,6 @@ class ContentService {
       if (voted) {
         homeProvider.setVotedSurveys(items);
       } else if (category) {
-        print(items.length);
         homeProvider.setCategorySurveys(items);
       } else {
         homeProvider.setSurveys(items);
@@ -61,9 +63,18 @@ class ContentService {
     }
   }
 
+  Future<bool> _addAmountDatabase({required double amount}) async {
+    final response = await httpService.request(
+        url: KStrings.patchMoney,
+        method: HttpMethod.patch,
+        data: {"moneyAmount": amount});
+    return response != null && response.statusCode == 200;
+  }
+
   Future voteSurvey(
       {required SurveyModel surveyModel, required SurveyChoices choice}) async {
     final homeProvier = locator.get<HomeProvider>();
+    final userModel = locator.get<AuthService>().resultData.user;
 
     final response = await httpService.request(
         url: KStrings.patchSurvey,
@@ -71,7 +82,41 @@ class ContentService {
         data: {"id": surveyModel.id, "vote": choice.name});
 
     if (response != null && response.statusCode == 200) {
+      userModel!.voteCount++;
+      if (surveyModel.isRewarded != null && surveyModel.isRewarded! > 0) {
+        userModel.money += surveyModel.isRewarded!;
+        await _addAmountDatabase(amount: surveyModel.isRewarded!);
+      }
       homeProvier.voteSurvey(surveyModel, choice);
     }
+  }
+
+  Future postSurvey(BuildContext context,
+      {required int? categoryId,
+      required String title,
+      required String content}) async {
+    final Utils utils = locator.get<Utils>();
+    showInfo(String msg) => utils.showInfo(context, message: msg);
+    stopLoding() => utils.stopLoading(context);
+    final navigator = Navigator.of(context);
+
+    FocusScope.of(context).unfocus();
+
+    utils.startLoading(context);
+
+    final response = await httpService.request(
+        url: KStrings.postSurvey,
+        method: HttpMethod.post,
+        data: {
+          "categoryId": categoryId,
+          "title": title,
+          "content": content,
+          "isPending": true
+        });
+    if (response != null && response.statusCode == 200) {
+      showInfo("Anketiniz inceleme için gönderildi.");
+      navigator.pop();
+    }
+    stopLoding();
   }
 }

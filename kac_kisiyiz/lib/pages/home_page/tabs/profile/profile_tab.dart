@@ -3,6 +3,7 @@ import 'package:kac_kisiyiz/locator.dart';
 import 'package:kac_kisiyiz/pages/home_page/tabs/profile/create_survey.dart';
 import 'package:kac_kisiyiz/pages/home_page/tabs/profile/settings.dart';
 import 'package:kac_kisiyiz/services/backend/auth_service.dart';
+import 'package:kac_kisiyiz/services/models/user_model.dart';
 import 'package:kac_kisiyiz/utils/colors.dart';
 import 'package:kac_kisiyiz/utils/consts.dart';
 import 'package:kac_kisiyiz/utils/images.dart';
@@ -12,6 +13,7 @@ class ProfileTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final UserModel? user = locator.get<AuthService>().resultData.user;
     return LayoutBuilder(
       builder: (context, constraints) {
         return Stack(
@@ -48,15 +50,17 @@ class ProfileTab extends StatelessWidget {
                       children: [
                         const SizedBox(height: 50),
                         Text(
-                          locator.get<AuthService>().resultData.name!,
+                          user!.name,
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.w500),
                         ),
                         const SizedBox(height: 10),
-                        _profileItem(count: 9, text: "Cevaplanan Anket"),
                         _profileItem(
-                            count: 22.40,
+                            count: user.voteCount.toDouble(),
+                            text: "Cevaplanan Anket"),
+                        _profileItem(
+                            count: user.money,
                             text: "Kazandığın Miktar",
                             isMoney: true),
                         InkWell(
@@ -142,7 +146,7 @@ class ProfileTab extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            isMoney ? "$count ₺" : "${count.round()}",
+            isMoney ? "${count.toStringAsFixed(2)} ₺" : "${count.round()}",
             style: TextStyle(
                 fontSize: isMoney ? 30 : 34,
                 fontWeight: FontWeight.bold,

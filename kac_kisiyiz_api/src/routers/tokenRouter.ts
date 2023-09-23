@@ -51,6 +51,7 @@ function tokenRouter(router: Router, root: Connector): Router {
               id: fields.insertId,
               mail: args.mail,
               password: args.password,
+              name: args.name,
             },
             req
           ),
@@ -65,14 +66,14 @@ function tokenRouter(router: Router, root: Connector): Router {
       return helper.sendErrorMissingData(res);
 
     // Kullanıcı bilgi sorgulama
-    const sql = `SELECT id, mail, name, password FROM users WHERE mail = ? AND password = ?`;
+    const sql = `SELECT u.id, u.mail, u.name, u.money, u.onesignalId, COUNT(v.id) as voteCount FROM users u LEFT JOIN voted v ON u.id = v.userId WHERE u.mail = ? AND u.password = ?`;
     const values = [args.mail, args.password];
     root.con.query(sql, values, (err, result) => {
       if (err) return helper.sendError(err, res);
       if (result[0]) {
         return res.json({
           msg: "Giriş Başarılı.",
-          name: result[0].name,
+          user: result[0],
           token: helper.createUserToken(result[0], req),
         });
       }

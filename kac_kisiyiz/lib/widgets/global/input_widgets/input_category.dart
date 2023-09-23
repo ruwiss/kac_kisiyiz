@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kac_kisiyiz/services/models/categories_model.dart';
 import 'package:kac_kisiyiz/utils/colors.dart';
 import 'package:kac_kisiyiz/utils/consts.dart';
 import 'package:kac_kisiyiz/widgets/global/input_widgets/input_container.dart';
@@ -6,21 +7,21 @@ import 'package:kac_kisiyiz/widgets/global/input_widgets/input_container.dart';
 class InputCategory extends StatefulWidget {
   const InputCategory(
       {super.key, required this.items, required this.onSelected});
-  final List<String> items;
-  final Function(String) onSelected;
+  final List<CategoryModel> items;
+  final Function(int?) onSelected;
 
   @override
   State<InputCategory> createState() => _InputCategoryState();
 }
 
 class _InputCategoryState extends State<InputCategory> {
-  String _dropdownvalue = "";
+  int? _dropdownvalue;
 
   @override
   Widget build(BuildContext context) {
     return InputContainer(
       child: DropdownButton(
-        value: _dropdownvalue.isEmpty ? null : _dropdownvalue,
+        value: _dropdownvalue,
         isExpanded: true,
         iconEnabledColor: KColors.disabled,
         underline: const SizedBox(),
@@ -34,18 +35,18 @@ class _InputCategoryState extends State<InputCategory> {
             color: KColors.disabled,
           ),
         ),
-        items: widget.items.map((String items) {
+        items: widget.items.map((item) {
           return DropdownMenuItem(
-            value: items,
+            value: item.id,
             child: Text(
-              items,
+              item.category,
               style: const TextStyle(color: Colors.black87),
             ),
           );
         }).toList(),
         onChanged: (newValue) {
-          setState(() => _dropdownvalue = newValue!);
-          widget.onSelected(newValue ?? "");
+          setState(() => _dropdownvalue = newValue);
+          widget.onSelected(newValue);
         },
       ),
     );

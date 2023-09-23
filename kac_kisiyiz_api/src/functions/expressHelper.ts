@@ -9,6 +9,7 @@ export class ExpressHelper {
   }
 
   sendError(err: mysql.MysqlError, res: Response) {
+    console.log(err.message);
     res.status(500).send({
       code: err.errno,
       msg: this.debug ? `HATA: ${err.message}` : "Bir sorun oluştu.",

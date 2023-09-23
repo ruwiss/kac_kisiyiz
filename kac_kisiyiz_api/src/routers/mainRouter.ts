@@ -1,7 +1,6 @@
-import { Response, Router } from "express";
+import { Router } from "express";
 import { ExpressHelper } from "../functions/expressHelper";
 import { Connector } from "../connector";
-import dotenv from "dotenv";
 
 function routes(router: Router, root: Connector): Router {
   const helper = new ExpressHelper();
@@ -176,31 +175,27 @@ function routes(router: Router, root: Connector): Router {
 
   router.post("/surveyData", (req, res) => {
     const [args, keys] = helper.getArgsByMethod(req);
-    const requirements = [
-      "categoryId",
-      "userId",
-      "title",
-      "content",
-      "image",
-      "adLink",
-      "isRewarded",
-    ];
+    const requirements = ["categoryId", "title", "content"];
+
+    const userId = keys.includes("userId") ? args.userId : req.body.user.id;
 
     if (!helper.listContainsList(keys, requirements))
       return helper.sendErrorMissingData(res);
 
-    const sql = `INSERT INTO surveys (categoryId, userId, title, content, image, ch1, ch2, adLink, isRewarded, isPending) VALUES (?,?,?,?,?,?,?,?,?)`;
+    const isPending = keys.includes("isPending") && args.isPending;
+
+    const sql = `INSERT INTO surveys (categoryId, userId, title, content, image, ch1, ch2, adLink, isRewarded, isPending) VALUES (?,?,?,?,?,?,?,?,?,?)`;
     const values = [
       args.categoryId,
-      args.userId,
+      userId,
       args.title,
       args.content,
       args.image,
       0,
       0,
       args.adLink,
-      args.isRewarded ?? false,
-      false,
+      args.isRewarded ?? 0.0,
+      isPending,
     ];
 
     root.con.query(sql, values, (err, result) => {
@@ -296,7 +291,6 @@ function routes(router: Router, root: Connector): Router {
             const mysqlDate = new Date(result[0].dateTime);
             const currentDate = new Date();
             const isSameDay = helper.areDatesOnSameDay(mysqlDate, currentDate);
-            console.log("isSameDay: ", isSameDay);
             if (isSameDay) {
               dailyVotedSql = `UPDATE dailyvoted SET count = count + 1, datetime = CURRENT_TIMESTAMP WHERE userId = ${userId}`;
             } else {
@@ -312,6 +306,19 @@ function routes(router: Router, root: Connector): Router {
           });
         });
       });
+    });
+  });
+
+  router.patch("/userMoney", (req, res) => {
+    const [args, keys] = helper.getArgsByMethod(req);
+    const userId = req.body.user.id;
+
+    const sql = `UPDATE users SET money = money + ? WHERE id = ?`;
+    const values = [args.moneyAmount, userId];
+
+    root.con.query(sql, values, (err) => {
+      if (err) return helper.sendError(err, res);
+      return res.status(200).json({ msg: "OK" });
     });
   });
 

@@ -36,4 +36,13 @@ class Utils {
       ),
     );
   }
+
+  Future<void> showInfo(BuildContext context, {required String message}) async {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.green,
+        content: Text(message),
+      ),
+    );
+  }
 }
