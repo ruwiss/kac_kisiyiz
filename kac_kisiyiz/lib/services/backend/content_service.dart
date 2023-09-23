@@ -5,7 +5,9 @@ import 'package:kac_kisiyiz/services/backend/http_service.dart';
 import 'package:kac_kisiyiz/services/functions/utils.dart';
 import 'package:kac_kisiyiz/services/models/categories_model.dart';
 import 'package:kac_kisiyiz/services/models/survey_model.dart';
+import 'package:kac_kisiyiz/services/models/user_model.dart';
 import 'package:kac_kisiyiz/services/providers/home_provider.dart';
+import 'package:kac_kisiyiz/services/providers/settings_provider.dart';
 import 'package:kac_kisiyiz/utils/strings.dart';
 import 'package:kac_kisiyiz/widgets/global/survey_widget.dart';
 
@@ -91,10 +93,12 @@ class ContentService {
     }
   }
 
-  Future postSurvey(BuildContext context,
-      {required int? categoryId,
-      required String title,
-      required String content}) async {
+  Future postSurvey(
+    BuildContext context, {
+    required int? categoryId,
+    required String title,
+    required String content,
+  }) async {
     final Utils utils = locator.get<Utils>();
     showInfo(String msg) => utils.showInfo(context, message: msg);
     stopLoding() => utils.stopLoading(context);
@@ -118,5 +122,49 @@ class ContentService {
       navigator.pop();
     }
     stopLoding();
+  }
+
+  Future editBankAccount(
+    BuildContext context, {
+    required String nameSurname,
+    required String bankName,
+    required String iban,
+  }) async {
+    final Utils utils = locator.get<Utils>();
+
+    showInfo(String msg) => utils.showInfo(context, message: msg);
+    stopLoding() => utils.stopLoading(context);
+    final navigator = Navigator.of(context);
+
+    FocusScope.of(context).unfocus();
+
+    utils.startLoading(context);
+
+    final response = await httpService.request(
+        url: KStrings.bankAccount,
+        method: HttpMethod.post,
+        data: {"nameSurname": nameSurname, "bankName": bankName, "iban": iban});
+
+    if (response != null && response.statusCode == 200) {
+      final settingsProvider = locator.get<SettingsProvider>();
+      settingsProvider.setUserBank(UserBankModel(nameSurname, bankName, iban));
+      navigator.pop();
+      showInfo(response.data['msg']);
+    }
+    stopLoding();
+  }
+
+  Future getBankAccount() async {
+    final settingsProvider = locator.get<SettingsProvider>();
+
+    if (settingsProvider.userBank == null) {
+      final response = await httpService.request(
+          url: KStrings.bankAccount, method: HttpMethod.get);
+      if (response != null && response.statusCode == 200) {
+        if ((response.data as Map).isNotEmpty) {
+          settingsProvider.setUserBank(UserBankModel.fromJson(response.data));
+        }
+      }
+    }
   }
 }

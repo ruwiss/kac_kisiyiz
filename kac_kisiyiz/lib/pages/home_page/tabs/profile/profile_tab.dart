@@ -7,6 +7,7 @@ import 'package:kac_kisiyiz/services/models/user_model.dart';
 import 'package:kac_kisiyiz/utils/colors.dart';
 import 'package:kac_kisiyiz/utils/consts.dart';
 import 'package:kac_kisiyiz/utils/images.dart';
+import 'package:kac_kisiyiz/widgets/global/action_button.dart';
 
 class ProfileTab extends StatelessWidget {
   const ProfileTab({super.key});
@@ -63,31 +64,20 @@ class ProfileTab extends StatelessWidget {
                             count: user.money,
                             text: "Kazandığın Miktar",
                             isMoney: true),
-                        InkWell(
-                          borderRadius: BorderRadius.circular(kBorderRadius),
-                          splashColor: Colors.white,
-                          highlightColor: Colors.white,
-                          onTap: () => showCreateSurveyBottomSheet(context),
-                          child: Container(
-                            alignment: Alignment.center,
-                            padding: const EdgeInsets.all(8),
-                            margin: const EdgeInsets.symmetric(
-                                horizontal: 30, vertical: 15),
-                            decoration: BoxDecoration(
-                              color: KColors.primary.withOpacity(.9),
-                              borderRadius:
-                                  BorderRadius.circular(kBorderRadius),
-                            ),
-                            child: const Text(
-                              "Anket Oluştur",
-                              style: TextStyle(
-                                fontSize: kFontSizeButton + 3,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
+                        ActionButton(
+                          padding: const EdgeInsets.all(8),
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 30, vertical: 15),
+                          onPressed: () => showCreateSurveyBottomSheet(context),
+                          backgroundColor: KColors.primary.withOpacity(.95),
+                          text: "Anket Oluştur",
+                          elevation: 0,
+                          textStyle: const TextStyle(
+                            fontSize: kFontSizeButton + 3,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),

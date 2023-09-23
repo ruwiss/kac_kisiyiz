@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kac_kisiyiz/locator.dart';
 import 'package:kac_kisiyiz/services/backend/content_service.dart';
-import 'package:kac_kisiyiz/services/functions/utils.dart';
 import 'package:kac_kisiyiz/services/providers/home_provider.dart';
 import 'package:kac_kisiyiz/widgets/global/action_button.dart';
 import 'package:kac_kisiyiz/widgets/global/input_widgets/input_category.dart';

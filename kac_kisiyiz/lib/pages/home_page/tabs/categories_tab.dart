@@ -58,7 +58,7 @@ class _CategoriesTabState extends State<CategoriesTab> {
                           child: Column(
                             children: [
                               Icon(
-                                IconData(e.iconPoint,
+                                IconData(e.iconPoint!,
                                     fontFamily: "MaterialIcons"),
                                 size: 50,
                                 color: Colors.black.withOpacity(0.65),

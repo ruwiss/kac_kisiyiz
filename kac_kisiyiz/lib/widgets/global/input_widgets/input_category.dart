@@ -6,9 +6,15 @@ import 'package:kac_kisiyiz/widgets/global/input_widgets/input_container.dart';
 
 class InputCategory extends StatefulWidget {
   const InputCategory(
-      {super.key, required this.items, required this.onSelected});
+      {super.key,
+      required this.items,
+      required this.onSelected,
+      this.text,
+      this.value});
   final List<CategoryModel> items;
   final Function(int?) onSelected;
+  final String? text;
+  final int? value;
 
   @override
   State<InputCategory> createState() => _InputCategoryState();
@@ -16,6 +22,12 @@ class InputCategory extends StatefulWidget {
 
 class _InputCategoryState extends State<InputCategory> {
   int? _dropdownvalue;
+
+  @override
+  void initState() {
+    _dropdownvalue = widget.value;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +40,7 @@ class _InputCategoryState extends State<InputCategory> {
         menuMaxHeight: 350,
         borderRadius: BorderRadius.circular(15),
         hint: Text(
-          "Bir kategori seçiniz",
+          widget.text ?? "Bir kategori seçiniz",
           style: TextStyle(
             fontSize: kFontSizeButton,
             fontWeight: FontWeight.w500,

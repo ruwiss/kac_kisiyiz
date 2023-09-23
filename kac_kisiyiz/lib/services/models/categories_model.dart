@@ -1,8 +1,8 @@
 class CategoryModel {
-  CategoryModel({this.id, required this.category, required this.iconPoint});
+  CategoryModel({this.id, required this.category,  this.iconPoint});
   final int? id;
   final String category;
-  final int iconPoint;
+  final int? iconPoint;
 
   CategoryModel.fromList(List<dynamic> list)
       : id = null,

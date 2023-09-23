@@ -1,18 +1,11 @@
 class UserModel {
-  UserModel({
-    required this.id,
-    required this.mail,
-    required this.name,
-    this.money = 0,
-    this.voteCount = 0,
-    this.onesignalId,
-  });
+  UserModel(this.id, this.mail, this.name, this.onesignalId);
   final int id;
   final String mail;
   final String name;
-  double money;
-  int voteCount;
   final String? onesignalId;
+  double money = 0;
+  int voteCount = 0;
 
   UserModel.fromJson(Map json)
       : id = json['id'],
@@ -23,4 +16,16 @@ class UserModel {
             : json['money'],
         voteCount = json['voteCount'] ?? 0,
         onesignalId = json['onesignalId'];
+}
+
+class UserBankModel {
+  UserBankModel(this.nameSurname, this.bankName, this.iban);
+  final String nameSurname;
+  final String bankName;
+  final String iban;
+
+  UserBankModel.fromJson(Map json)
+      : nameSurname = json['nameSurname'],
+        bankName = json['bankName'],
+        iban = json['iban'];
 }

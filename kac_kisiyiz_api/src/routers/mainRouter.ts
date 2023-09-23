@@ -20,14 +20,16 @@ function routes(router: Router, root: Connector): Router {
   });
 
   router.get("/bank", (req, res) => {
-    const [args, keys] = helper.getArgsByMethod(req);
-    if (!helper.listContainsList(keys, ["mail", "password"]))
-      return helper.sendErrorMissingData(res);
+    const userId = req.body.user.id;
 
-    const sql = `SELECT * FROM bank WHERE userId = ?`;
-    root.con.query(sql, [req.body.user.id], (err, result) => {
+    const sql = `SELECT * FROM bank WHERE userId = ${userId}`;
+    root.con.query(sql, (err, result) => {
       if (err) helper.sendError(err, res);
-      if (result[0]) res.send(result[0]);
+      if (result[0]) {
+        res.send(result[0]);
+      } else {
+        res.send({});
+      }
     });
   });
 
@@ -148,28 +150,33 @@ function routes(router: Router, root: Connector): Router {
 
   router.post("/bank", (req, res) => {
     const [args, keys] = helper.getArgsByMethod(req);
-    const requirements = [
-      "mail",
-      "password",
-      "nameSurname",
-      "bankName",
-      "iban",
-    ];
+    const requirements = ["nameSurname", "bankName", "iban"];
+    const userId = req.body.user.id;
 
     if (!helper.listContainsList(keys, requirements))
       return helper.sendErrorMissingData(res);
 
-    const insertSql = `INSERT INTO bank (userId, nameSurname, bankName, iban) VALUES (?, ?, ?, ?)`;
-    const insertValues = [
-      req.body.user.id,
-      args.nameSurname,
-      args.bankName,
-      args.iban,
-    ];
-
-    root.con.query(insertSql, insertValues, (err) => {
+    // Banka hesabı var mı kontrol etme
+    const sql = `SELECT id FROM bank WHERE userId = ${userId}`;
+    root.con.query(sql, (err, result) => {
       if (err) return helper.sendError(err, res);
-      res.send({ msg: "Banka hesabı kaydedildi." });
+      if (result[0]) {
+        const updateSql = `UPDATE bank SET nameSurname = ?, bankName = ?, iban = ? WHERE userId = ${userId}`;
+        const values = [args.nameSurname, args.bankName, args.iban];
+
+        root.con.query(updateSql, values, (err) => {
+          if (err) return helper.sendError(err, res);
+          res.json({ msg: "Ödeme bilgileri güncellendi." });
+        });
+      } else {
+        const insertSql = `INSERT INTO bank (userId, nameSurname, bankName, iban) VALUES (?, ?, ?, ?)`;
+        const values = [userId, args.nameSurname, args.bankName, args.iban];
+
+        root.con.query(insertSql, values, (err) => {
+          if (err) return helper.sendError(err, res);
+          res.json({ msg: "Banka hesabı kaydedildi." });
+        });
+      }
     });
   });
 

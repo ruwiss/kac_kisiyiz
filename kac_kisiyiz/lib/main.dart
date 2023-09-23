@@ -4,6 +4,7 @@ import 'package:kac_kisiyiz/locator.dart';
 import 'package:kac_kisiyiz/pages/auth_page.dart';
 import 'package:kac_kisiyiz/pages/home_page/home_page.dart';
 import 'package:kac_kisiyiz/services/providers/home_provider.dart';
+import 'package:kac_kisiyiz/services/providers/settings_provider.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -18,7 +19,9 @@ void main() async {
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider<HomeProvider>(
-          create: (context) => locator.get<HomeProvider>())
+          create: (context) => locator.get<HomeProvider>()),
+      ChangeNotifierProvider<SettingsProvider>(
+          create: (context) => locator.get<SettingsProvider>())
     ],
     child: const MyApp(),
   ));

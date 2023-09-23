@@ -5,6 +5,8 @@ class KStrings {
   static const String authUrl = "$hostUser/auth";
   static const String tokenUrl = "$hostUser/token";
 
+  static const String bankAccount = "$hostApi/bank";
+
   static const String fetchCategoriesUrl = "$hostApi/categories";
   static const String fetchSurveys = "$hostApi/surveys";
 

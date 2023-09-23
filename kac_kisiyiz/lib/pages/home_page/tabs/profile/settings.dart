@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:kac_kisiyiz/locator.dart';
+import 'package:kac_kisiyiz/pages/home_page/tabs/profile/bank_account.dart';
+import 'package:kac_kisiyiz/services/backend/content_service.dart';
+import 'package:kac_kisiyiz/services/providers/settings_provider.dart';
 import 'package:kac_kisiyiz/utils/colors.dart';
 import 'package:kac_kisiyiz/utils/consts.dart';
 
 void showSettingsBottomSheet(BuildContext context) {
+  if (locator.get<SettingsProvider>().userBank == null) {
+    locator.get<ContentService>().getBankAccount();
+  }
   Widget settingsItem(
           {required String text, Function()? onTap, Color? color}) =>
       Padding(
@@ -41,7 +48,12 @@ void showSettingsBottomSheet(BuildContext context) {
               fontWeight: FontWeight.w500,
             ),
           ),
-          settingsItem(text: "Ödeme Bilgileri", onTap: () {}),
+          settingsItem(
+              text: "Ödeme Bilgileri",
+              onTap: () {
+                Navigator.pop(context);
+                showBankAccountBottomSheet(context);
+              }),
           settingsItem(text: "Gizlilik Sözleşmesi", onTap: () {}),
           settingsItem(text: "Çıkış Yap", onTap: () {}),
           settingsItem(
