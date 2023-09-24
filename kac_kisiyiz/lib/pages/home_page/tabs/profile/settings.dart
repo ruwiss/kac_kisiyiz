@@ -71,7 +71,9 @@ void showSettingsBottomSheet(BuildContext context) {
               title: "Emin misin?",
               message:
                   "(${locator.get<AuthService>().resultData.user!.mail})\nHesaptan çıkış yapılıyor.",
-              onConfirm: () {},
+              onConfirm: () {
+                locator.get<AuthService>().signOut(context);
+              },
             ),
           ),
           settingsItem(

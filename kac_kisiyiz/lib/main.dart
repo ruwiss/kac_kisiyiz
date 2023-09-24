@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:kac_kisiyiz/locator.dart';
 import 'package:kac_kisiyiz/pages/auth_page.dart';
 import 'package:kac_kisiyiz/pages/home_page/home_page.dart';
+import 'package:kac_kisiyiz/services/backend/shared_preferences.dart';
 import 'package:kac_kisiyiz/services/providers/home_provider.dart';
 import 'package:kac_kisiyiz/services/providers/settings_provider.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +17,7 @@ void main() async {
   );
   WidgetsFlutterBinding.ensureInitialized();
   setupLocator();
+  await locator.get<MyDB>().initialize();
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider<HomeProvider>(

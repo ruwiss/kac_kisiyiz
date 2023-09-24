@@ -16,6 +16,15 @@ class UserModel {
             : json['money'],
         voteCount = json['voteCount'] ?? 0,
         onesignalId = json['onesignalId'];
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "mail": mail,
+        "name": name,
+        "onesignalId": onesignalId,
+        "money": money,
+        "voteCount": voteCount
+      };
 }
 
 class UserBankModel {

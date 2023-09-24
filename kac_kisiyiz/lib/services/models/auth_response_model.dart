@@ -10,4 +10,8 @@ class AuthResponse {
       : msg = json['msg'],
         user = UserModel.fromJson(json['user']),
         token = json['token'];
+
+  Map<String, dynamic> toJson() => {
+    "msg": msg, "user": user?.toJson() , "token": token
+  }; 
 }

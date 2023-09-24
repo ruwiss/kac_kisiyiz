@@ -4,6 +4,7 @@ import 'package:kac_kisiyiz/locator.dart';
 import 'package:kac_kisiyiz/pages/auth_page.dart';
 import 'package:kac_kisiyiz/services/backend/auth_service.dart';
 import 'package:kac_kisiyiz/services/backend/http_service.dart';
+import 'package:kac_kisiyiz/services/backend/shared_preferences.dart';
 import 'package:kac_kisiyiz/services/functions/utils.dart';
 import 'package:kac_kisiyiz/services/models/categories_model.dart';
 import 'package:kac_kisiyiz/services/models/survey_model.dart';
@@ -186,7 +187,7 @@ class ContentService {
 
   Future getPrivacyPolicy() async {
     final settingsProvider = locator.get<SettingsProvider>();
-
+    if (settingsProvider.privacyPolicy != null) return;
     final response = await _dio.get(KStrings.privacyPolicy,
         options: Options(responseType: ResponseType.plain));
     if (response.statusCode == 200) {
@@ -214,6 +215,8 @@ class ContentService {
 
       locator.registerSingleton<AuthService>(AuthService());
       locator.registerSingleton<ContentService>(ContentService());
+
+      locator.get<MyDB>().deleteUser();
 
       navigator.pop();
       navigator.pushNamedAndRemoveUntil("/", (route) => route is AuthPage);

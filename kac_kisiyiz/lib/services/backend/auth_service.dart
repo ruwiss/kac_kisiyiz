@@ -1,5 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:kac_kisiyiz/locator.dart';
+import 'package:kac_kisiyiz/pages/auth_page.dart';
+import 'package:kac_kisiyiz/services/backend/shared_preferences.dart';
 import 'package:kac_kisiyiz/services/extensions/string_extensions.dart';
 import 'package:kac_kisiyiz/services/functions/utils.dart';
 import 'package:kac_kisiyiz/services/models/auth_response_model.dart';
@@ -23,7 +26,6 @@ class AuthService {
       required String mail,
       required String password,
       required bool isLogin}) async {
-
     if (!mail.isValidEmail()) {
       return Utils.showError(context, error: "Mail adresiniz doğru değil.");
     }
@@ -49,6 +51,7 @@ class AuthService {
     }
 
     resultData = AuthResponse.fromJson(response.data);
+    locator.get<MyDB>().saveUser(resultData);
 
     Utils.stopLoading(context);
 
@@ -58,5 +61,13 @@ class AuthService {
     }
 
     Navigator.of(context).pushReplacementNamed("/home");
+  }
+
+  Future signOut(BuildContext context) async {
+    final navigator = Navigator.of(context);
+
+    await locator.get<MyDB>().deleteUser();
+
+    navigator.pushNamedAndRemoveUntil("/", (route) => route is AuthPage);
   }
 }
