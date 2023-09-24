@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:kac_kisiyiz/utils/colors.dart';
 
 class Utils {
-  Future<void> startLoading(BuildContext context) async {
-    return await showDialog(
+  static Future startLoading(BuildContext context) async {
+    await showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
@@ -21,10 +21,10 @@ class Utils {
     );
   }
 
-  Future<void> stopLoading(BuildContext context) async =>
+  static Future stopLoading(BuildContext context) async =>
       Navigator.of(context).pop();
 
-  Future<void> showError(BuildContext context, {String? error}) async {
+  static Future showError(BuildContext context, {String? error}) async {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         action: SnackBarAction(
@@ -37,11 +37,44 @@ class Utils {
     );
   }
 
-  Future<void> showInfo(BuildContext context, {required String message}) async {
+  static Future showInfo(BuildContext context,
+      {required String message}) async {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         backgroundColor: Colors.green,
         content: Text(message),
+      ),
+    );
+  }
+
+  static Future showConfirmDialog(
+    BuildContext context, {
+    required String title,
+    required String message,
+    required Function() onConfirm,
+  }) async {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: [
+          ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text("İptal")),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              onConfirm();
+            },
+            style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.redAccent.withOpacity(.6)),
+            child: const Text(
+              "Onayla",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:kac_kisiyiz/locator.dart';
 import 'package:kac_kisiyiz/pages/home_page/tabs/profile/bank_account.dart';
+import 'package:kac_kisiyiz/pages/home_page/tabs/profile/privacy_policy.dart';
+import 'package:kac_kisiyiz/services/backend/auth_service.dart';
 import 'package:kac_kisiyiz/services/backend/content_service.dart';
+import 'package:kac_kisiyiz/services/functions/utils.dart';
 import 'package:kac_kisiyiz/services/providers/settings_provider.dart';
 import 'package:kac_kisiyiz/utils/colors.dart';
 import 'package:kac_kisiyiz/utils/consts.dart';
@@ -49,38 +52,35 @@ void showSettingsBottomSheet(BuildContext context) {
             ),
           ),
           settingsItem(
-              text: "Ödeme Bilgileri",
-              onTap: () {
-                Navigator.pop(context);
-                showBankAccountBottomSheet(context);
-              }),
-          settingsItem(text: "Gizlilik Sözleşmesi", onTap: () {}),
-          settingsItem(text: "Çıkış Yap", onTap: () {}),
+            text: "Ödeme Bilgileri",
+            onTap: () {
+              Navigator.pop(context);
+              showBankAccountBottomSheet(context);
+            },
+          ),
+          settingsItem(
+            text: "Gizlilik Sözleşmesi",
+            onTap: () {
+              showPrivacyPolicyBottomSheet(context);
+            },
+          ),
+          settingsItem(
+            text: "Çıkış Yap",
+            onTap: () => Utils.showConfirmDialog(
+              context,
+              title: "Emin misin?",
+              message:
+                  "(${locator.get<AuthService>().resultData.user!.mail})\nHesaptan çıkış yapılıyor.",
+              onConfirm: () {},
+            ),
+          ),
           settingsItem(
               text: "Hesabımı Sil",
-              onTap: () => showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: const Text("Emin misin?"),
-                      content:
-                          const Text("Hesabınız kalıcı olarak silinecektir."),
-                      actions: [
-                        ElevatedButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: const Text("İptal")),
-                        ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  Colors.redAccent.withOpacity(.6)),
-                          child: const Text(
-                            "Onayla",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+              onTap: () => Utils.showConfirmDialog(context,
+                  title: "Emin misin?",
+                  message: "Hesabınız kalıcı olarak silinecektir.",
+                  onConfirm: () =>
+                      locator.get<ContentService>().deleteUserAccount(context)),
               color: Colors.red.withOpacity(.2)),
         ],
       ),

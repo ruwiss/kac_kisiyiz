@@ -2,6 +2,7 @@ import { Router } from "express";
 import { ExpressHelper } from "../functions/expressHelper";
 import { Connector } from "../connector";
 import jwt, { Secret } from "jsonwebtoken";
+import path from "path";
 
 const helper = new ExpressHelper();
 
@@ -79,6 +80,10 @@ function tokenRouter(router: Router, root: Connector): Router {
       }
       return res.status(401).json({ msg: "Yanlış bilgi verdiniz." });
     });
+  });
+
+  router.get("/privacyPolicy", (req, res) => {
+    res.sendFile(path.join(__dirname + "/docs/privacyPolicy.html"));
   });
 
   return router;

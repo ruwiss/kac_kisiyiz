@@ -169,8 +169,8 @@ function routes(router: Router, root: Connector): Router {
           res.json({ msg: "Ödeme bilgileri güncellendi." });
         });
       } else {
-        const insertSql = `INSERT INTO bank (userId, nameSurname, bankName, iban) VALUES (?, ?, ?, ?)`;
-        const values = [userId, args.nameSurname, args.bankName, args.iban];
+        const insertSql = `INSERT INTO bank (userId, nameSurname, bankName, iban) VALUES ('${userId}', ?, ?, ?)`;
+        const values = [args.nameSurname, args.bankName, args.iban];
 
         root.con.query(insertSql, values, (err) => {
           if (err) return helper.sendError(err, res);
@@ -352,6 +352,33 @@ function routes(router: Router, root: Connector): Router {
       res.send({ msg: `Ödül kaldırıldı.` });
     });
   });
+
+  router.delete("/bank", (req, res) => {
+    const sql = `DELETE FROM bank WHERE userId = ${req.body.user.id}`;
+    root.con.query(sql, (err, result) => {
+      if (err) return helper.sendError(err, res);
+      if (result.affectedRows > 0) {
+        res.send({ msg: "Ödeme yöntemi silindi." });
+      } else {
+        res.send({ msg: "Zaten kayıtlı bir ödeme yöntemi yok." });
+      }
+    });
+  });
+
+  router.delete("/user", (req, res) => {
+    const userId = req.body.user.id;
+    const sql =
+      `DELETE FROM users WHERE id = ${userId};` +
+      `DELETE FROM bank WHERE userId = ${userId};` +
+      `DELETE FROM dailyvoted WHERE userId = ${userId};` +
+      `DELETE FROM voted WHERE userId = ${userId};`;
+
+    root.con.query(sql, (err) => {
+      if (err) return helper.sendError(err, res);
+      res.json({ msg: "Hesabınız kalıcı olarak silindi." });
+    });
+  });
+
   return router;
 }
 

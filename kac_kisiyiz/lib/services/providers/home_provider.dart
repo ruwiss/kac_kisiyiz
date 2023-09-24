@@ -74,4 +74,14 @@ class HomeProvider with ChangeNotifier {
   bool isVotedSurvey(int id) {
     return votedSurveys.indexWhere((element) => element.id == id) != -1;
   }
+
+  void resetData() {
+    currentMenu = MenuItems.kackisiyiz;
+    categories = [];
+    currentCategoryId = -1;
+    surveys = [];
+    votedSurveys = [];
+    categorySurveys = {};
+    notifyListeners();
+  }
 }

@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:kac_kisiyiz/locator.dart';
 import 'package:kac_kisiyiz/services/extensions/string_extensions.dart';
 import 'package:kac_kisiyiz/services/functions/utils.dart';
 import 'package:kac_kisiyiz/services/models/auth_response_model.dart';
@@ -24,21 +23,20 @@ class AuthService {
       required String mail,
       required String password,
       required bool isLogin}) async {
-    final utils = locator.get<Utils>();
 
     if (!mail.isValidEmail()) {
-      return utils.showError(context, error: "Mail adresiniz doğru değil.");
+      return Utils.showError(context, error: "Mail adresiniz doğru değil.");
     }
 
     if (mail.isEmpty || password.isEmpty) {
-      return utils.showError(context, error: "Eksik bilgi");
+      return Utils.showError(context, error: "Eksik bilgi");
     }
 
     if (!isLogin && (name!.isEmpty || name.length < 5)) {
-      return utils.showError(context, error: "İsminizi Girmelisiniz");
+      return Utils.showError(context, error: "İsminizi Girmelisiniz");
     }
 
-    utils.startLoading(context);
+    Utils.startLoading(context);
 
     late Response response;
 
@@ -52,10 +50,10 @@ class AuthService {
 
     resultData = AuthResponse.fromJson(response.data);
 
-    utils.stopLoading(context);
+    Utils.stopLoading(context);
 
     if (response.statusCode != 200 || resultData.token == null) {
-      utils.showError(context, error: resultData.msg);
+      Utils.showError(context, error: resultData.msg);
       return;
     }
 

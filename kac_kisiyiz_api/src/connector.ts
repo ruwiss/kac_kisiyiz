@@ -73,21 +73,17 @@ export class Connector {
     ];
     const insertQueries = datas.map(
       (v) =>
-        `INSERT INTO settings (name, attr) VALUES ('${v.name}', '${v.attr}')`
+        `INSERT INTO settings (name, attr)
+        SELECT '${v.name}', '${v.attr}'
+        WHERE NOT EXISTS (SELECT 1 FROM settings WHERE name = '${v.name}');`
     );
 
     for (let i = 0; i < insertQueries.length; i++) {
-      const querySql = `SELECT id FROM settings WHERE name = '${datas[i].name}'`;
-      await this.con.query(querySql, async (err, result) => {
+      this.con.query(insertQueries[i], (err) => {
         if (err) throw err;
-        if (!result[0]) {
-          await this.con.query(insertQueries[i], (err) => {
-            if (err) throw err;
-            this.con.commit();
-          });
-        }
       });
     }
+
     // Ayarlar Bitiş
 
     // Kategoriler Başlangıç
