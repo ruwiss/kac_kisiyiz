@@ -18,10 +18,10 @@ class SurveyWidget extends StatelessWidget {
   final SurveyModel surveyModel;
   final bool small;
 
-  void _voteSurvey(SurveyChoices ch) {
+  void _voteSurvey(BuildContext context, SurveyChoices ch) {
     locator
         .get<ContentService>()
-        .voteSurvey(surveyModel: surveyModel, choice: ch);
+        .voteSurvey(context, surveyModel: surveyModel, choice: ch);
   }
 
   @override
@@ -121,12 +121,12 @@ class SurveyWidget extends StatelessWidget {
                                   ActionButton.outlined(
                                     text: "Yokum",
                                     onPressed: () =>
-                                        _voteSurvey(SurveyChoices.ch1),
+                                        _voteSurvey(context, SurveyChoices.ch1),
                                   ),
                                   ActionButton(
                                     text: "Burdayım!",
                                     onPressed: () =>
-                                        _voteSurvey(SurveyChoices.ch2),
+                                        _voteSurvey(context, SurveyChoices.ch2),
                                   )
                                 ],
                               )

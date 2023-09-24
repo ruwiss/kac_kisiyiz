@@ -11,8 +11,10 @@ import 'package:kac_kisiyiz/services/models/survey_model.dart';
 import 'package:kac_kisiyiz/services/models/user_model.dart';
 import 'package:kac_kisiyiz/services/providers/home_provider.dart';
 import 'package:kac_kisiyiz/services/providers/settings_provider.dart';
+import 'package:kac_kisiyiz/utils/colors.dart';
 import 'package:kac_kisiyiz/utils/strings.dart';
 import 'package:kac_kisiyiz/widgets/global/survey_widget.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ContentService {
   final _httpService = HttpService();
@@ -77,10 +79,15 @@ class ContentService {
     return response != null && response.statusCode == 200;
   }
 
-  Future voteSurvey(
+  Future voteSurvey(BuildContext context,
       {required SurveyModel surveyModel, required SurveyChoices choice}) async {
     final homeProvier = locator.get<HomeProvider>();
     final userModel = locator.get<AuthService>().resultData.user;
+    showConfirmDialog(Function() onConfirm) => Utils.showConfirmDialog(context,
+        title: "Bilgi",
+        message: "Bu konuyla ilgili bir makale var. Okumak ister misin?",
+        onConfirm: onConfirm,
+        buttonColor: KColors.primary);
 
     final response = await _httpService.request(
         url: KStrings.patchSurvey,
@@ -92,6 +99,12 @@ class ContentService {
       if (surveyModel.isRewarded != null && surveyModel.isRewarded! > 0) {
         userModel.money += surveyModel.isRewarded!;
         await _addAmountDatabase(amount: surveyModel.isRewarded!);
+      }
+      final adLink = surveyModel.adLink;
+      if (adLink != null && adLink.isNotEmpty) {
+        showConfirmDialog(() {
+          launchUrl(Uri.parse(adLink), mode: LaunchMode.externalApplication);
+        });
       }
       homeProvier.voteSurvey(surveyModel, choice);
     }

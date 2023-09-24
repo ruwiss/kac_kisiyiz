@@ -71,6 +71,7 @@ void showSettingsBottomSheet(BuildContext context) {
               title: "Emin misin?",
               message:
                   "(${locator.get<AuthService>().resultData.user!.mail})\nHesaptan çıkış yapılıyor.",
+                  buttonColor: KColors.redButtonColor,
               onConfirm: () {
                 locator.get<AuthService>().signOut(context);
               },
@@ -81,6 +82,7 @@ void showSettingsBottomSheet(BuildContext context) {
               onTap: () => Utils.showConfirmDialog(context,
                   title: "Emin misin?",
                   message: "Hesabınız kalıcı olarak silinecektir.",
+                  buttonColor: KColors.redButtonColor,
                   onConfirm: () =>
                       locator.get<ContentService>().deleteUserAccount(context)),
               color: Colors.red.withOpacity(.2)),

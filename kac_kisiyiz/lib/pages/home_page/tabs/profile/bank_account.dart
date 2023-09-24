@@ -4,6 +4,7 @@ import 'package:kac_kisiyiz/services/backend/content_service.dart';
 import 'package:kac_kisiyiz/services/functions/utils.dart';
 import 'package:kac_kisiyiz/services/models/categories_model.dart';
 import 'package:kac_kisiyiz/services/providers/settings_provider.dart';
+import 'package:kac_kisiyiz/utils/colors.dart';
 import 'package:kac_kisiyiz/widgets/global/action_button.dart';
 import 'package:kac_kisiyiz/widgets/global/input_widgets/input_category.dart';
 import 'package:kac_kisiyiz/widgets/global/input_widgets/input_field.dart';
@@ -141,6 +142,7 @@ class _BankAccountWidgetState extends State<BankAccountWidget> {
                         context,
                         title: "Emin misin?",
                         message: "Ödeme yönteminiz silinecektir.",
+                        buttonColor: KColors.redButtonColor,
                         onConfirm: () {},
                       );
                     }

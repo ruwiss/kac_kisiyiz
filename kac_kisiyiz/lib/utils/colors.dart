@@ -8,4 +8,5 @@ class KColors {
   static final Color disabled = Colors.blue.shade900.withOpacity(.5);
   static const Color bottomMenuIcon = Color(0xFFF7730F);
   static const Color rippleOutlinedColor = Color(0xFFEEEEEE);
+  static final Color redButtonColor = Colors.redAccent.withOpacity(.6);
 }

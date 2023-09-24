@@ -52,6 +52,7 @@ class Utils {
     required String title,
     required String message,
     required Function() onConfirm,
+    required Color buttonColor,
   }) async {
     showDialog(
       context: context,
@@ -67,8 +68,7 @@ class Utils {
               Navigator.pop(context);
               onConfirm();
             },
-            style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.redAccent.withOpacity(.6)),
+            style: ElevatedButton.styleFrom(backgroundColor: buttonColor),
             child: const Text(
               "Onayla",
               style: TextStyle(color: Colors.white),
