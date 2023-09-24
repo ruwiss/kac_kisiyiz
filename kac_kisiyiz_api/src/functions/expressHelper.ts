@@ -53,6 +53,8 @@ export class ExpressHelper {
   }
 
   areDatesOnSameDay(date1: Date, date2: Date): boolean {
+    console.log(date1.toDateString());
+    console.log(date2.toDateString());
     return (
       date1.getFullYear() === date2.getFullYear() &&
       date1.getMonth() === date2.getMonth() &&

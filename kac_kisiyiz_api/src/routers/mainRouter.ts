@@ -289,7 +289,7 @@ function routes(router: Router, root: Connector): Router {
         if (err) return helper.sendError(err, res);
 
         // Kullanıcının günlük yaptığı oylama sayısında arttırma işlemi
-        const sql = `SELECT id FROM dailyvoted WHERE userId = ${userId}`;
+        const sql = `SELECT * FROM dailyvoted WHERE userId = ${userId}`;
         root.con.query(sql, (err, result) => {
           if (err) return helper.sendError(err, res);
           let dailyVotedSql: string;
@@ -298,10 +298,11 @@ function routes(router: Router, root: Connector): Router {
             const mysqlDate = new Date(result[0].dateTime);
             const currentDate = new Date();
             const isSameDay = helper.areDatesOnSameDay(mysqlDate, currentDate);
+            console.log(isSameDay);
             if (isSameDay) {
-              dailyVotedSql = `UPDATE dailyvoted SET count = count + 1, datetime = CURRENT_TIMESTAMP WHERE userId = ${userId}`;
-            } else {
               dailyVotedSql = `UPDATE dailyvoted SET count = count + 1 WHERE userId = ${userId}`;
+            } else {
+              dailyVotedSql = `UPDATE dailyvoted SET count = 1, dateTime = CURRENT_TIMESTAMP WHERE userId = ${userId}`;
             }
           } else {
             // Insert
