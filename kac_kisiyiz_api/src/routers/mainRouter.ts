@@ -298,7 +298,6 @@ function routes(router: Router, root: Connector): Router {
             const mysqlDate = new Date(result[0].dateTime);
             const currentDate = new Date();
             const isSameDay = helper.areDatesOnSameDay(mysqlDate, currentDate);
-            console.log(isSameDay);
             if (isSameDay) {
               dailyVotedSql = `UPDATE dailyvoted SET count = count + 1 WHERE userId = ${userId}`;
             } else {
