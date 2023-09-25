@@ -1,29 +1,38 @@
 class UserModel {
-  UserModel(this.id, this.mail, this.name, this.onesignalId);
+  UserModel(this.id, this.mail, this.password, this.name, this.onesignalId,
+      this.bankAccount);
   final int id;
   final String mail;
-  final String name;
+  String password;
+  String name;
   final String? onesignalId;
   double money = 0;
   int voteCount = 0;
+  UserBankModel? bankAccount;
 
   UserModel.fromJson(Map json)
       : id = json['id'],
         mail = json['mail'],
+        password = json['password'],
         name = json['name'],
         money = json['money'].runtimeType == int
             ? (json['money'] as int).toDouble()
             : json['money'],
         voteCount = json['voteCount'] ?? 0,
-        onesignalId = json['onesignalId'];
+        onesignalId = json['onesignalId'],
+        bankAccount = json["bankAccount"] == null
+            ? null
+            : UserBankModel.fromJson(json['bankAccount']);
 
   Map<String, dynamic> toJson() => {
         "id": id,
         "mail": mail,
+        "password": password,
         "name": name,
         "onesignalId": onesignalId,
         "money": money,
-        "voteCount": voteCount
+        "voteCount": voteCount,
+        "bankAccount": bankAccount?.toJson(),
       };
 }
 
@@ -37,4 +46,10 @@ class UserBankModel {
       : nameSurname = json['nameSurname'],
         bankName = json['bankName'],
         iban = json['iban'];
+
+  Map<String, dynamic> toJson() => {
+        "nameSurname": nameSurname,
+        "bankName": bankName,
+        "iban": iban,
+      };
 }

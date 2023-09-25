@@ -8,10 +8,9 @@ class AuthResponse {
 
   AuthResponse.fromJson(Map json)
       : msg = json['msg'],
-        user = UserModel.fromJson(json['user']),
+        user = json['user'] == null ? null : UserModel.fromJson(json['user']),
         token = json['token'];
 
-  Map<String, dynamic> toJson() => {
-    "msg": msg, "user": user?.toJson() , "token": token
-  }; 
+  Map<String, dynamic> toJson() =>
+      {"msg": msg, "user": user?.toJson(), "token": token};
 }

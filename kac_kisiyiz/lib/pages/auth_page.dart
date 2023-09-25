@@ -96,13 +96,38 @@ class _AuthPageState extends State<AuthPage> {
                           const SizedBox(height: 5),
                           if (_authType == AuthType.register)
                             InputField(
-                                controller: _tName, hintText: "Ad Soyadınız"),
+                              controller: _tName,
+                              hintText: "Ad Soyadınız",
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "İsmi boş bırakmayınız.";
+                                }
+                                return null;
+                              },
+                            ),
                           InputField(
-                              controller: _tMail, hintText: "Email Adresiniz"),
+                              controller: _tMail,
+                              hintText: "Email Adresiniz",
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Bu alanı boş bırakmayınız.";
+                                } else if (!value.contains("@")) {
+                                  return "Doğru mail adresi giriniz.";
+                                }
+                                return null;
+                              }),
                           InputField(
                             controller: _tPass,
                             hintText: "Şifreniz",
                             obscureText: true,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Bu alanı boş bırakmayınız.";
+                              } else if (value.length < 5) {
+                                return "Güçlü bir şifre deneyin.";
+                              }
+                              return null;
+                            },
                           ),
                           if (_authType == AuthType.login)
                             Align(

@@ -2,15 +2,11 @@ import 'package:dio/dio.dart';
 import 'package:kac_kisiyiz/locator.dart';
 import 'package:kac_kisiyiz/services/backend/auth_service.dart';
 import 'package:kac_kisiyiz/utils/strings.dart';
-import 'dart:developer';
 
 enum HttpMethod { get, post, patch, delete }
 
 class HttpService {
   final _dio = Dio();
-
-  _logErrror(Response response) =>
-      log("(${response.statusCode}): ${response.data}");
 
   Future<Response?> request({
     required String url,
@@ -39,12 +35,7 @@ class HttpService {
       final response = await req(url,
           data: withArgs ? null : data,
           queryParameters: withArgs ? data : null);
-      if (response.statusCode != 200) {
-        _logErrror(tokenResponse);
-      }
       return response;
-    } else {
-      _logErrror(tokenResponse);
     }
     return null;
   }

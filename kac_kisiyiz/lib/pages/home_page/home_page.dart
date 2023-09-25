@@ -4,10 +4,15 @@ import 'package:kac_kisiyiz/locator.dart';
 import 'package:kac_kisiyiz/pages/home_page/tabs/categories_tab.dart';
 import 'package:kac_kisiyiz/pages/home_page/tabs/profile/profile_tab.dart';
 import 'package:kac_kisiyiz/services/backend/content_service.dart';
+import 'package:kac_kisiyiz/services/functions/admob_ads/app_lifecycle_reactor.dart';
+import 'package:kac_kisiyiz/services/functions/admob_ads/app_open_ad.dart';
+import 'package:kac_kisiyiz/services/functions/admob_ads/interstitial_ad.dart';
+import 'package:kac_kisiyiz/services/functions/utils.dart';
 import 'package:kac_kisiyiz/services/models/survey_model.dart';
 import 'package:kac_kisiyiz/services/providers/home_provider.dart';
 import 'package:kac_kisiyiz/utils/colors.dart';
 import 'package:kac_kisiyiz/utils/images.dart';
+import 'package:kac_kisiyiz/utils/strings.dart';
 import 'package:kac_kisiyiz/widgets/features/home/filter_button.dart';
 import 'package:kac_kisiyiz/widgets/global/bottom_menu.dart';
 import 'package:kac_kisiyiz/widgets/global/input_widgets/input_container.dart';
@@ -35,9 +40,32 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  _setAdmobAds() {
+    // AppOpen
+    AppOpenAdManager appOpenAdManager =
+        AppOpenAdManager(adUnitId: KStrings.appOpenId)..loadAd();
+    AppLifecycleReactor(appOpenAdManager: appOpenAdManager)
+        .listenToAppStateChanges();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Utils.startLoading(context);
+      // Interstitial
+      final interstitialAdManager =
+          InterstitialAdManager(adUnitId: KStrings.insertstitialId);
+      interstitialAdManager.load(
+        onLoaded: (ad) {
+          Utils.stopLoading(context);
+          ad.show();
+        },
+        onError: () => Utils.stopLoading(context),
+      );
+    });
+  }
+
   @override
   void initState() {
+    _setAdmobAds();
     locator.get<ContentService>().getSurveys();
+
     super.initState();
   }
 

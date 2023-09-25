@@ -329,6 +329,38 @@ function routes(router: Router, root: Connector): Router {
     });
   });
 
+  router.patch("/userInformation", (req, res) => {
+    const [args, keys] = helper.getArgsByMethod(req);
+    if (!keys[0]) return helper.sendErrorMissingData(res);
+    const user = req.body.user;
+    let sql;
+    let values;
+
+    const wrongPassword = () =>
+      res.status(401).json({ msg: "Mevcut şifreniz yanlış." });
+
+    if (helper.listContainsList(keys, ["name", "newPassword", "oldPassword"])) {
+      console.log(args.oldPassword, user.password);
+      if (args.oldPassword != user.password) return wrongPassword();
+      sql = `UPDATE users SET name = ?, password = ? WHERE id = ${user.id}`;
+      values = [args.name, args.newPassword];
+    } else if (keys.includes("name")) {
+      sql = `UPDATE users SET name = ? WHERE id = ${user.id}`;
+      values = [args.name];
+    } else if (keys.includes("newPassword")) {
+      if (args.oldPassword != user.password) return wrongPassword();
+      sql = `UPDATE users SET password = ? WHERE id = ${user.id}`;
+      values = [args.newPassword];
+    } else {
+      return helper.sendErrorMissingData(res);
+    }
+
+    root.con.query(sql, values, (err) => {
+      if (err) return helper.sendError(err, res);
+      res.json({ msg: "Bilgileriniz güncellendi." });
+    });
+  });
+
   //  -------------------- DELETE --------------------  //
   router.delete("/settings", (req, res) => {
     const [args, keys] = helper.getArgsByMethod(req);

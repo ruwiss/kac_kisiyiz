@@ -6,6 +6,7 @@ import 'package:kac_kisiyiz/services/backend/shared_preferences.dart';
 import 'package:kac_kisiyiz/services/extensions/string_extensions.dart';
 import 'package:kac_kisiyiz/services/functions/utils.dart';
 import 'package:kac_kisiyiz/services/models/auth_response_model.dart';
+import 'package:kac_kisiyiz/services/providers/home_provider.dart';
 import 'package:kac_kisiyiz/utils/strings.dart';
 
 class AuthService {
@@ -30,14 +31,6 @@ class AuthService {
       return Utils.showError(context, error: "Mail adresiniz doğru değil.");
     }
 
-    if (mail.isEmpty || password.isEmpty) {
-      return Utils.showError(context, error: "Eksik bilgi");
-    }
-
-    if (!isLogin && (name!.isEmpty || name.length < 5)) {
-      return Utils.showError(context, error: "İsminizi Girmelisiniz");
-    }
-
     Utils.startLoading(context);
 
     late Response response;
@@ -49,7 +42,10 @@ class AuthService {
       response = await _dio.post(KStrings.authUrl,
           data: {"name": name, "mail": mail, "password": password});
     }
-
+    if (!isLogin) {
+      auth(context: context, mail: mail, password: password, isLogin: true);
+      return;
+    }
     resultData = AuthResponse.fromJson(response.data);
     locator.get<MyDB>().saveUser(resultData);
 
@@ -68,6 +64,7 @@ class AuthService {
 
     await locator.get<MyDB>().deleteUser();
 
+    locator.get<HomeProvider>().setCurrentMenu(MenuItems.kackisiyiz);
     navigator.pushNamedAndRemoveUntil("/", (route) => route is AuthPage);
   }
 }

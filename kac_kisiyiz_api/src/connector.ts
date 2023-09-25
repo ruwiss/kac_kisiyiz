@@ -66,10 +66,9 @@ export class Connector {
     // Ayarlar Başlangıç
     const datas = [
       {
-        name: "updateRequired",
-        attr: process.env.UPDATE_REQUIRED,
+        name: "surveyAdDisplayCount",
+        attr: process.env.SURVEY_AD_DISPLAY_COUNT,
       },
-      { name: "surveyLimit", attr: process.env.SURVEY_LIMIT },
     ];
     const insertQueries = datas.map(
       (v) =>

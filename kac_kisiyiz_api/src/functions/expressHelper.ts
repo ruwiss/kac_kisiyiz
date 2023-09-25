@@ -28,7 +28,8 @@ export class ExpressHelper {
 
   listContainsList(list: any[], items: any[]): boolean {
     let contains: boolean = true;
-    for (let i = 0; i < 0; i++) if (!list.includes(items[i])) contains = false;
+    for (let i = 0; i < items.length; i++)
+      if (!list.includes(items[i])) contains = false;
     return contains;
   }
 

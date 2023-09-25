@@ -46,7 +46,6 @@ function tokenRouter(router: Router, root: Connector): Router {
         if (err) res.status(502).json({ msg: err.message });
         return res.json({
           msg: "Kayıt işlemi başarılı.",
-          name: args.name,
           token: helper.createUserToken(
             {
               id: fields.insertId,
@@ -67,11 +66,11 @@ function tokenRouter(router: Router, root: Connector): Router {
       return helper.sendErrorMissingData(res);
 
     // Kullanıcı bilgi sorgulama
-    const sql = `SELECT u.id, u.mail, u.name, u.money, u.onesignalId, COUNT(v.id) as voteCount FROM users u LEFT JOIN voted v ON u.id = v.userId WHERE u.mail = ? AND u.password = ?`;
+    const sql = `SELECT u.*, COUNT(v.id) as voteCount FROM users u LEFT JOIN voted v ON u.id = v.userId WHERE u.mail = ? AND u.password = ?`;
     const values = [args.mail, args.password];
     root.con.query(sql, values, (err, result) => {
       if (err) return helper.sendError(err, res);
-      if (result[0]) {
+      if (result[0] && result[0].id != null) {
         return res.json({
           msg: "Giriş Başarılı.",
           user: result[0],

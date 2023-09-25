@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:kac_kisiyiz/locator.dart';
+import 'package:kac_kisiyiz/services/backend/auth_service.dart';
 import 'package:kac_kisiyiz/services/backend/content_service.dart';
 import 'package:kac_kisiyiz/services/functions/utils.dart';
+import 'package:kac_kisiyiz/services/models/auth_response_model.dart';
 import 'package:kac_kisiyiz/services/models/categories_model.dart';
-import 'package:kac_kisiyiz/services/providers/settings_provider.dart';
+import 'package:kac_kisiyiz/services/models/user_model.dart';
 import 'package:kac_kisiyiz/utils/colors.dart';
 import 'package:kac_kisiyiz/widgets/global/action_button.dart';
 import 'package:kac_kisiyiz/widgets/global/input_widgets/input_category.dart';
@@ -22,6 +24,8 @@ class _BankAccountWidgetState extends State<BankAccountWidget> {
   final _tIban = TextEditingController();
   int? _selectedCategoryId;
 
+  late UserBankModel? _userBank;
+
   // ignore: prefer_final_fields
   List<CategoryModel> _bankCategories = [];
 
@@ -34,11 +38,12 @@ class _BankAccountWidgetState extends State<BankAccountWidget> {
   }
 
   void _recoverUserBank() async {
-    final userBank = locator.get<SettingsProvider>().userBank;
-    if (userBank != null) {
-      _tNameSurname.text = userBank.nameSurname;
-      _tIban.text = userBank.iban;
-      _selectedCategoryId = _findBankBySingleValue(name: userBank.bankName).id;
+    _userBank = locator.get<AuthService>().resultData.user!.bankAccount;
+    if (_userBank != null) {
+      _tNameSurname.text = _userBank!.nameSurname;
+      _tIban.text = _userBank!.iban;
+      _selectedCategoryId =
+          _findBankBySingleValue(name: _userBank!.bankName).id;
       setState(() {});
     }
   }
@@ -70,7 +75,6 @@ class _BankAccountWidgetState extends State<BankAccountWidget> {
 
   @override
   void initState() {
-    locator.get<ContentService>().getCategories();
     _setBankCategories();
     _recoverUserBank();
     super.initState();
@@ -86,7 +90,7 @@ class _BankAccountWidgetState extends State<BankAccountWidget> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const Text(
-              "Ödeme Bilgilerini Düzenle",
+              "Ödeme Bilgileriniz",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 20,
@@ -137,13 +141,15 @@ class _BankAccountWidgetState extends State<BankAccountWidget> {
                   text: " SİL ",
                   backgroundColor: Colors.red.withOpacity(.75),
                   onPressed: () {
-                    if (locator.get<SettingsProvider>().userBank != null) {
+                    if (_userBank != null) {
                       Utils.showConfirmDialog(
                         context,
                         title: "Emin misin?",
                         message: "Ödeme yönteminiz silinecektir.",
                         buttonColor: KColors.redButtonColor,
-                        onConfirm: () {},
+                        onConfirm: () => locator
+                            .get<ContentService>()
+                            .deleteBankAccount(context),
                       );
                     }
                   },

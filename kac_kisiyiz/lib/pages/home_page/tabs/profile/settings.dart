@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:kac_kisiyiz/locator.dart';
 import 'package:kac_kisiyiz/pages/home_page/tabs/profile/bank_account.dart';
 import 'package:kac_kisiyiz/pages/home_page/tabs/profile/privacy_policy.dart';
+import 'package:kac_kisiyiz/pages/home_page/tabs/profile/user_information.dart';
 import 'package:kac_kisiyiz/services/backend/auth_service.dart';
 import 'package:kac_kisiyiz/services/backend/content_service.dart';
 import 'package:kac_kisiyiz/services/functions/utils.dart';
-import 'package:kac_kisiyiz/services/providers/settings_provider.dart';
 import 'package:kac_kisiyiz/utils/colors.dart';
 import 'package:kac_kisiyiz/utils/consts.dart';
 
 void showSettingsBottomSheet(BuildContext context) {
-  if (locator.get<SettingsProvider>().userBank == null) {
+  if (locator.get<AuthService>().resultData.user!.bankAccount == null) {
     locator.get<ContentService>().getBankAccount();
   }
   Widget settingsItem(
@@ -39,7 +39,7 @@ void showSettingsBottomSheet(BuildContext context) {
     context: context,
     builder: (context) => Container(
       padding: const EdgeInsets.all(15),
-      height: 360,
+      height: 420,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -50,6 +50,13 @@ void showSettingsBottomSheet(BuildContext context) {
               fontSize: 20,
               fontWeight: FontWeight.w500,
             ),
+          ),
+          settingsItem(
+            text: "Kullanıcı Bilgileri",
+            onTap: () {
+              Navigator.pop(context);
+              showUserInformationBottomSheet(context);
+            },
           ),
           settingsItem(
             text: "Ödeme Bilgileri",
@@ -71,7 +78,7 @@ void showSettingsBottomSheet(BuildContext context) {
               title: "Emin misin?",
               message:
                   "(${locator.get<AuthService>().resultData.user!.mail})\nHesaptan çıkış yapılıyor.",
-                  buttonColor: KColors.redButtonColor,
+              buttonColor: KColors.redButtonColor,
               onConfirm: () {
                 locator.get<AuthService>().signOut(context);
               },

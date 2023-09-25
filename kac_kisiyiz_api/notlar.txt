@@ -5,73 +5,14 @@ npx tsc --init
 npm i @types/isim -D
 npx ts-node ./src/index.ts
 
-settings
-- id
-- name
-- attr
- {updateRequired {status:bool, url:string}, surveyLimit:int}
-
-users
-- id
-- mail
-- name
-- password
-- money
-- onesignalId
-
-bank
-- id
-- userId
-- nameSurname
-- bankName
-- iban
-
-categories
-- id
-- name
-- icon
-
-surveys
-- id
-- categoryId
-- userId
-- title
-- content
-- image
-- ch1
-- ch2
-- adLink
-- isRewarded
-- isPending
-
-pending
-- id
-- surveyId
-- userId
-- category
-- title
-- content
-
-rewarded
-- id
-- surveyId
-- reward
-
-voted
-- id
-- surveyId
-- userId
-
-
-Kai kozhong
-
-
-JWT
-
 Fold All (Ctrl+K Ctrl+0)
 
 Unfold All (Ctrl+K Ctrl+J)
 
 
-Kategoriler
-{"Kategoriler": "", "80'ler": "", "90'lar": "", "Aile": "", "Alışkanlık": "", "Alışveriş": "", "Arabalar": "", "Arkadaşlar": "", "Astroloji": "", "Basketbol": "", "Basılı Yayın": "", "Batıl İnançlar": "", "Bebek Çocuk": "", "Beslenme": "", "Borsa": "", "Cinsellik": "", "Dizi": "", "Doğa": "", "Döviz": "", "Dünya": "", "Ekonomi": "", "Estetik": "", "Ev Hali": "", "Eğitim": "", "Eğlence": "", "Felsefe": "", "Fotoğraf": "", "Futbol": "", "Futbol Magazin": "", "Futbol Mizah": "", "Geri Dönüşüm": "", "Gündem": "", "Günlük": "", "Güzellik": "", "Hastalıklar": "", "Hava Durumu": "", "Hayvanlar": "", "Hepsi": "", "Hobiler": "", "Huylar": "", "İndirim": "", "Kadınlar": "", "Kediler": "", "Keyif": "", "Kitaplar": "", "Kişisel Bakım": "", "Kişisel Gelişim": "", "Klasik Oyun": "", "Klişeler": "", "Kozmetik": "", "Kripto Para": "", "Kutlamalar": "", "Köpekler": "", "Magazin": "", "Makyaj": "", "Meslek": "", "Mobil Oyunlar": "", "Moda": "", "Motor Sporları": "", "Müzik": "", "Otomotiv": "", "Oyuncular": "", "Para": "", "Pilates": "", "Psikoloji": "", "Resim": "", "Sanat": "", "Sağlık": "", "Sağlık Hizmetleri": "", "Seyehat": "", "Sinema": "", "Sosyal Medya": "", "Spor": "", "Tabular": "", "Takıntılar": "", "Teknoloji": "", "Televizyon": "", "Trendler": "", "Ulaşım": "", "Yarışmalar": "", "Yatırım": "", "Yaşam": "", "Yemek": "", "Yolculuk": "", "YouTube": "", "Çalışanlar": "", "İletişim": "", "İlişkiler": "", "İçecek": "", "İş Hayatı": "", "Şans": "", "Şehirler": ""};
+Yapılacaklar
+- Splash Screen
+- OneSignal
+- Şifremi Unuttum
+- Settings içindeki anket reklam sıklığı alınıp, anketlerin arasına geçiş reklamı ve eğer anket yoksa banner reklam eklenecek.
+- İnternet yoksa kullanıcı uygulamaya erişemeyecek.

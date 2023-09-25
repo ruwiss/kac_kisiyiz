@@ -160,8 +160,12 @@ class ContentService {
         data: {"nameSurname": nameSurname, "bankName": bankName, "iban": iban});
 
     if (response != null && response.statusCode == 200) {
-      final settingsProvider = locator.get<SettingsProvider>();
-      settingsProvider.setUserBank(UserBankModel(nameSurname, bankName, iban));
+      final authResponse = locator.get<AuthService>().resultData;
+      final myDB = locator.get<MyDB>();
+
+      authResponse.user!.bankAccount =
+          UserBankModel(nameSurname, bankName, iban);
+      myDB.saveUser(authResponse);
       navigator.pop();
       showInfo(response.data['msg']);
     }
@@ -169,21 +173,25 @@ class ContentService {
   }
 
   Future getBankAccount() async {
-    final settingsProvider = locator.get<SettingsProvider>();
+    final authResponse = locator.get<AuthService>().resultData;
+    final myDB = locator.get<MyDB>();
 
-    if (settingsProvider.userBank == null) {
+    if (authResponse.user!.bankAccount == null) {
       final response = await _httpService.request(
           url: KStrings.bankAccount, method: HttpMethod.get);
       if (response != null && response.statusCode == 200) {
         if ((response.data as Map).isNotEmpty) {
-          settingsProvider.setUserBank(UserBankModel.fromJson(response.data));
+          authResponse.user!.bankAccount =
+              UserBankModel.fromJson(response.data);
+          myDB.saveUser(authResponse);
         }
       }
     }
   }
 
   Future deleteBankAccount(BuildContext context) async {
-    final settingsProvider = locator.get<SettingsProvider>();
+    final authResponse = locator.get<AuthService>().resultData;
+    final myDB = locator.get<MyDB>();
     showInfo(String msg) => Utils.showInfo(context, message: msg);
 
     final navigator = Navigator.of(context);
@@ -192,7 +200,8 @@ class ContentService {
         url: KStrings.bankAccount, method: HttpMethod.delete);
 
     if (response != null && response.statusCode == 200) {
-      settingsProvider.setUserBank(null);
+      authResponse.user!.bankAccount = null;
+      myDB.saveUser(authResponse);
       navigator.pop();
       showInfo(response.data['msg']);
     }
@@ -218,10 +227,8 @@ class ContentService {
         url: KStrings.deleteUser, method: HttpMethod.delete);
     if (response != null && response.statusCode == 200) {
       final homeProvider = locator.get<HomeProvider>();
-      final settingsProvider = locator.get<SettingsProvider>();
 
       homeProvider.resetData();
-      settingsProvider.resetData();
 
       locator.unregister<AuthService>();
       locator.unregister<ContentService>();
@@ -233,6 +240,40 @@ class ContentService {
 
       navigator.pop();
       navigator.pushNamedAndRemoveUntil("/", (route) => route is AuthPage);
+    }
+  }
+
+  Future changeUserInformation(BuildContext context, Map<String, dynamic> data,
+      {Function(String)? onError}) async {
+    if (data.isEmpty) return;
+    final navigator = Navigator.of(context);
+    final authResponse = locator.get<AuthService>().resultData;
+    final myDB = locator.get<MyDB>();
+
+    final response = await _httpService.request(
+      url: KStrings.patchUserInformation,
+      method: HttpMethod.patch,
+      data: data,
+    );
+
+    if (response != null && response.statusCode == 200) {
+      data.forEach((key, value) {
+        if (key == "name") {
+          authResponse.user!.name = data["name"];
+        } else if (key == "newPassword") {
+          authResponse.user!.password = data["newPassword"];
+        }
+      });
+      myDB.saveUser(authResponse);
+      navigator.pop();
+      if (data.containsKey("newPassword") && context.mounted) {
+        locator.get<AuthService>().signOut(context);
+      }
+      if (context.mounted) {
+        Utils.showInfo(context, message: response.data["msg"]);
+      }
+    } else if (response != null && response.statusCode == 401) {
+      if (onError != null) onError(response.data["msg"]);
     }
   }
 }
