@@ -14,7 +14,4 @@ Yapılacaklar
 - Splash Screen
 - OneSignal
 - Şifremi Unuttum
-- Settings içindeki anket reklam sıklığı alınıp, anketlerin arasına geçiş reklamı ve eğer anket yoksa banner reklam eklenecek.
 - İnternet yoksa kullanıcı uygulamaya erişemeyecek.
-- Çekim limiti belirtilecek
-- Uygulama kullanım metni girilecek

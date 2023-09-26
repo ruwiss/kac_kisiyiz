@@ -1,4 +1,4 @@
-package com.rw.kackisiyiz.kac_kisiyiz
+package com.rw.kackisiyiz
 
 import io.flutter.embedding.android.FlutterActivity
 

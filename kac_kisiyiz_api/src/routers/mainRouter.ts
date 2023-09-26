@@ -70,7 +70,7 @@ function routes(router: Router, root: Connector): Router {
       LEFT JOIN users u ON s.userId = u.id
       INNER JOIN voted v ON s.id = v.surveyId AND v.userId = ?
       WHERE s.content IS NOT NULL
-      ORDER BY s.id DESC
+      ORDER BY s.ch2 DESC
       LIMIT ${process.env.SURVEY_LIMIT};`;
       sqlArgs = [userId];
     } else if (keys.includes("categoryId")) {
@@ -82,7 +82,7 @@ function routes(router: Router, root: Connector): Router {
       LEFT JOIN categories c ON s.categoryId = c.id
       LEFT JOIN users u ON s.userId = u.id
       WHERE v.id IS NULL AND s.isPending = 0 AND s.categoryId = ?
-      ORDER BY s.id DESC
+      ORDER BY s.ch2 DESC
       LIMIT ${envLimit};`;
       sqlArgs = [userId, args.categoryId];
     } else {
@@ -94,7 +94,7 @@ function routes(router: Router, root: Connector): Router {
       LEFT JOIN categories c ON s.categoryId = c.id
       LEFT JOIN users u ON s.userId = u.id
       WHERE v.id IS NULL AND s.isPending = 0
-      ORDER BY s.id DESC
+      ORDER BY s.ch2 DESC
       LIMIT ${envLimit};`;
       sqlArgs = [userId];
     }

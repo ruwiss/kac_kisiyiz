@@ -32,7 +32,7 @@ class Utils {
     );
   }
 
-  static stopLoading(BuildContext context) => Navigator.of(context).pop();
+  static void stopLoading(BuildContext context) => Navigator.of(context).pop();
 
   static Future showError(BuildContext context, {String? error}) async {
     ScaffoldMessenger.of(context).showSnackBar(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kac_kisiyiz/locator.dart';
+import 'package:kac_kisiyiz/pages/home_page/tabs/profile/app_information.dart';
 import 'package:kac_kisiyiz/pages/home_page/tabs/profile/bank_account.dart';
 import 'package:kac_kisiyiz/pages/home_page/tabs/profile/privacy_policy.dart';
 import 'package:kac_kisiyiz/pages/home_page/tabs/profile/user_information.dart';
@@ -37,9 +38,10 @@ void showSettingsBottomSheet(BuildContext context) {
 
   showModalBottomSheet(
     context: context,
+    isScrollControlled: true,
     builder: (context) => Container(
       padding: const EdgeInsets.all(15),
-      height: 420,
+      height: 465,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -66,6 +68,13 @@ void showSettingsBottomSheet(BuildContext context) {
             },
           ),
           settingsItem(
+            text: "Uygulama Hakkında",
+            onTap: () {
+              Navigator.pop(context);
+              showAppInformationBottomSheet(context);
+            },
+          ),
+          settingsItem(
             text: "Gizlilik Sözleşmesi",
             onTap: () {
               Navigator.pop(context);
@@ -86,14 +95,17 @@ void showSettingsBottomSheet(BuildContext context) {
             ),
           ),
           settingsItem(
-              text: "Hesabımı Sil",
-              onTap: () => Utils.showConfirmDialog(context,
-                  title: "Emin misin?",
-                  message: "Hesabınız kalıcı olarak silinecektir.",
-                  buttonColor: KColors.redButtonColor,
-                  onConfirm: () =>
-                      locator.get<ContentService>().deleteUserAccount(context)),
-              color: Colors.red.withOpacity(.2)),
+            text: "Hesabımı Sil",
+            onTap: () => Utils.showConfirmDialog(
+              context,
+              title: "Emin misin?",
+              message: "Hesabınız kalıcı olarak silinecektir.",
+              buttonColor: KColors.redButtonColor,
+              onConfirm: () =>
+                  locator.get<ContentService>().deleteUserAccount(context),
+            ),
+            color: Colors.red.withOpacity(.2),
+          ),
         ],
       ),
     ),

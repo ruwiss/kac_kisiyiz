@@ -21,7 +21,7 @@ class ContentService {
   final _httpService = HttpService();
   final _dio = Dio();
   String? privacyPolicy;
-  SettingsModel? settingsModel;
+  late List<SettingsModel> settings;
   int voteCounter = 0;
   final interstitialAd =
       InterstitialAdManager(adUnitId: KStrings.insertstitialId);
@@ -30,14 +30,19 @@ class ContentService {
     final response = await _httpService.request(
         url: KStrings.settings, method: HttpMethod.get);
     if (response != null && response.statusCode == 200) {
-      settingsModel = SettingsModel.fromData(response.data);
+      List<SettingsModel> items = [];
+      for (var i in response.data) {
+        items.add(SettingsModel.fromJson(i));
+      }
+      settings = items;
     }
   }
 
   void _checkForAd(BuildContext context) {
     voteCounter++;
-    final limit = settingsModel!.surveyAdDisplayCount!;
-    if (voteCounter >= limit) {
+    final limit =
+        settings.singleWhere((e) => e.name == "surveyAdDisplayCount").attr;
+    if (voteCounter >= int.parse(limit)) {
       Utils.startLoading(context, text: "Reklam Bekleniyor");
       interstitialAd.load(
         onLoaded: (ad) {

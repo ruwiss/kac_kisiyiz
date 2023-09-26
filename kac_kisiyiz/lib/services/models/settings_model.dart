@@ -1,13 +1,12 @@
 class SettingsModel {
-  SettingsModel({this.privacyPolicy, this.surveyAdDisplayCount});
-  String? privacyPolicy;
-  int? surveyAdDisplayCount;
+  String name;
+  String attr;
 
-  SettingsModel.fromData(List data) {
-    for (Map i in data) {
-      if (i["name"] == "surveyAdDisplayCount") {
-        surveyAdDisplayCount = int.parse(i["attr"]);
-      }
-    }
-  }
+  SettingsModel(this.name, this.attr);
+
+  SettingsModel.fromJson(Map<String, dynamic> json)
+      : name = json['name'],
+        attr = json['attr'];
+
+  Map<String, dynamic> toJson() => {"name": name, "attr": attr};
 }

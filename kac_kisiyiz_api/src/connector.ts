@@ -66,8 +66,16 @@ export class Connector {
     // Ayarlar Başlangıç
     const datas = [
       {
+        name: "surveyLimit",
+        attr: process.env.SURVEY_LIMIT,
+      },
+      {
         name: "surveyAdDisplayCount",
         attr: process.env.SURVEY_AD_DISPLAY_COUNT,
+      },
+      {
+        name: "withdrawalLimit",
+        attr: process.env.WITHDRAWAL_LIMIT,
       },
     ];
     const insertQueries = datas.map(
