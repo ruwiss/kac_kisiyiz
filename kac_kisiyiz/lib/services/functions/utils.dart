@@ -2,18 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:kac_kisiyiz/utils/colors.dart';
 
 class Utils {
-  static Future startLoading(BuildContext context) async {
+  static Future startLoading(BuildContext context, {String? text}) async {
     await showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return const SimpleDialog(
+        return SimpleDialog(
           elevation: 0,
           backgroundColor:
               Colors.transparent, // can change this to your prefered color
           children: [
             Center(
-              child: CircularProgressIndicator(color: KColors.secondary),
+              child: Column(
+                children: [
+                  const CircularProgressIndicator(color: KColors.secondary),
+                  if (text != null) ...[
+                    const SizedBox(height: 10),
+                    Text(
+                      text,
+                      style: const TextStyle(fontSize: 25, color: Colors.white),
+                    ),
+                  ]
+                ],
+              ),
             )
           ],
         );

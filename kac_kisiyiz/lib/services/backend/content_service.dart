@@ -5,6 +5,7 @@ import 'package:kac_kisiyiz/pages/auth_page.dart';
 import 'package:kac_kisiyiz/services/backend/auth_service.dart';
 import 'package:kac_kisiyiz/services/backend/http_service.dart';
 import 'package:kac_kisiyiz/services/backend/shared_preferences.dart';
+import 'package:kac_kisiyiz/services/functions/admob_ads/interstitial_ad.dart';
 import 'package:kac_kisiyiz/services/functions/utils.dart';
 import 'package:kac_kisiyiz/services/models/categories_model.dart';
 import 'package:kac_kisiyiz/services/models/settings_model.dart';
@@ -19,7 +20,38 @@ import 'package:url_launcher/url_launcher.dart';
 class ContentService {
   final _httpService = HttpService();
   final _dio = Dio();
-  final _settingsModel = SettingsModel();
+  String? privacyPolicy;
+  SettingsModel? settingsModel;
+  int voteCounter = 0;
+  final interstitialAd =
+      InterstitialAdManager(adUnitId: KStrings.insertstitialId);
+
+  Future getSettings() async {
+    final response = await _httpService.request(
+        url: KStrings.settings, method: HttpMethod.get);
+    if (response != null && response.statusCode == 200) {
+      settingsModel = SettingsModel.fromData(response.data);
+    }
+  }
+
+  void _checkForAd(BuildContext context) {
+    voteCounter++;
+    final limit = settingsModel!.surveyAdDisplayCount!;
+    if (voteCounter >= limit) {
+      Utils.startLoading(context, text: "Reklam Bekleniyor");
+      interstitialAd.load(
+        onLoaded: (ad) {
+          voteCounter = 0;
+          Utils.stopLoading(context);
+          ad.show();
+        },
+        onError: () {
+          voteCounter--;
+          Utils.stopLoading(context);
+        },
+      );
+    }
+  }
 
   Future getCategories() async {
     final homeProvider = locator.get<HomeProvider>();
@@ -108,6 +140,7 @@ class ContentService {
         });
       }
       homeProvier.voteSurvey(surveyModel, choice);
+      if (context.mounted) _checkForAd(context);
     }
   }
 
@@ -209,8 +242,8 @@ class ContentService {
   }
 
   Future<String?> getPrivacyPolicy() async {
-    if (_settingsModel.privacyPolicy != null) {
-      return _settingsModel.privacyPolicy!;
+    if (privacyPolicy != null) {
+      return privacyPolicy!;
     }
     final response = await _dio.get(KStrings.privacyPolicy,
         options: Options(responseType: ResponseType.plain));
@@ -219,7 +252,7 @@ class ContentService {
       if (data.contains("<!-- 1 -->")) {
         data = data.split("<!-- 1 -->")[1].split("<!-- 2 -->")[0].trim();
       }
-      _settingsModel.privacyPolicy = data;
+      privacyPolicy = data;
       return data;
     }
     return null;

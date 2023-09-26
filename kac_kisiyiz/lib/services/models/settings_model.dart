@@ -1,10 +1,13 @@
 class SettingsModel {
-  SettingsModel({this.privacyPolicy});
+  SettingsModel({this.privacyPolicy, this.surveyAdDisplayCount});
   String? privacyPolicy;
+  int? surveyAdDisplayCount;
 
-  SettingsModel.fromJson(Map json) {
-    json.forEach((key, value) {
-      //
-    });
+  SettingsModel.fromData(List data) {
+    for (Map i in data) {
+      if (i["name"] == "surveyAdDisplayCount") {
+        surveyAdDisplayCount = int.parse(i["attr"]);
+      }
+    }
   }
 }

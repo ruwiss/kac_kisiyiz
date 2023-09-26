@@ -68,6 +68,7 @@ void showSettingsBottomSheet(BuildContext context) {
           settingsItem(
             text: "Gizlilik Sözleşmesi",
             onTap: () {
+              Navigator.pop(context);
               showPrivacyPolicyBottomSheet(context);
             },
           ),

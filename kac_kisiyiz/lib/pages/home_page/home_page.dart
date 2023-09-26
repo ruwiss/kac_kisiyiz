@@ -47,7 +47,7 @@ class _HomePageState extends State<HomePage> {
     AppLifecycleReactor(appOpenAdManager: appOpenAdManager)
         .listenToAppStateChanges();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Utils.startLoading(context);
+      Utils.startLoading(context, text: "Hoşgeldiniz");
       // Interstitial
       final interstitialAdManager =
           InterstitialAdManager(adUnitId: KStrings.insertstitialId);
@@ -61,10 +61,16 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  _getDatas() async {
+    final contentService = locator.get<ContentService>();
+    await contentService.getSettings();
+    contentService.getSurveys();
+  }
+
   @override
   void initState() {
     _setAdmobAds();
-    locator.get<ContentService>().getSurveys();
+    _getDatas();
 
     super.initState();
   }
