@@ -28,13 +28,12 @@ Uygulama içerisinde anketleri yanıtlayarak para kazanabilirsiniz. Günlük ola
 
 Ayrıca profil bölümünde bulunan "Anket Oluştur" butonuyla kendi anketlerinizi oluşturabilir ve bize destekte bulunabilirsiniz. Ayrıca oluşturduğunuz anketlere bağlı olarak ödüllendirilebilirsiniz.
 
-Birikimleriniz $withdrawalLimit₺'e ulaştığında çekim talebinde bulunabilirsiniz.
+Birikimleriniz $withdrawalLimit₺'e ulaştığında, profil kısmında belirttiğiniz banka hesabına ödemeniz gerçekleşecektir.
 
 Uygulama, kullanıcılara gösterdiği reklamlardan gelir elde etmektedir. Elde edilen gelire bağlı olarak ödüllü anketlerin sayısı artırılmaktadır.
 
 Ne kadar çok kullanıcı, o kadar kazanç demek. Bu nedenle, uygulamaya Play Store üzerinden yorum atarak ve farklı kişilerle paylaşarak kazancınızı artırabilirsiniz.
 """;
-    setState(() {});
   }
 
   @override

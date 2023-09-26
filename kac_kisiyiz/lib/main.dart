@@ -1,3 +1,4 @@
+import 'package:connectivity_checker/connectivity_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:kac_kisiyiz/locator.dart';
@@ -28,19 +29,21 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: "Poppins",
-        useMaterial3: true,
-        splashColor: Colors.transparent,
-        highlightColor: Colors.transparent,
+    return ConnectivityAppWrapper(
+      app: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          fontFamily: "Poppins",
+          useMaterial3: true,
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+        ),
+        initialRoute: "/",
+        routes: {
+          "/": (context) => const AuthPage(),
+          "/home": (context) => const HomePage(),
+        },
       ),
-      initialRoute: "/",
-      routes: {
-        "/": (context) => const AuthPage(),
-        "/home": (context) => const HomePage(),
-      },
     );
   }
 }
