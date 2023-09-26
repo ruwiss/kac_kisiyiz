@@ -3,9 +3,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:kac_kisiyiz/locator.dart';
-import 'package:kac_kisiyiz/pages/auth_page.dart';
+import 'package:kac_kisiyiz/pages/auth_page/auth_page.dart';
+import 'package:kac_kisiyiz/pages/auth_page/forgot_password.dart';
 import 'package:kac_kisiyiz/pages/home_page/home_page.dart';
 import 'package:kac_kisiyiz/services/backend/shared_preferences.dart';
+import 'package:kac_kisiyiz/services/providers/auth_provider.dart';
 import 'package:kac_kisiyiz/services/providers/home_provider.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
@@ -19,6 +21,8 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider<AuthProvider>(
+            create: (context) => locator.get<AuthProvider>()),
         ChangeNotifierProvider<HomeProvider>(
             create: (context) => locator.get<HomeProvider>()),
       ],
@@ -45,6 +49,7 @@ class MyApp extends StatelessWidget {
         routes: {
           "/": (context) => const AuthPage(),
           "/home": (context) => const HomePage(),
+          "/forgotPassword": (context) => const ForgotPasswordPage()
         },
       ),
     );

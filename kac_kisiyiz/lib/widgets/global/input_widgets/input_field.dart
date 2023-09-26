@@ -14,6 +14,7 @@ class InputField extends StatefulWidget {
     this.validator,
     this.isDisabled = false,
     this.icon,
+    this.widget,
     this.iconClicked,
   });
   final TextEditingController? controller;
@@ -24,6 +25,7 @@ class InputField extends StatefulWidget {
   final String? Function(String?)? validator;
   final bool isDisabled;
   final IconData? icon;
+  final Widget? widget;
   final Function()? iconClicked;
 
   @override
@@ -91,6 +93,11 @@ class _InputFieldState extends State<InputField> {
               ),
               onPressed: widget.iconClicked,
             ),
+          ),
+        if (widget.widget != null)
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: widget.widget,
           ),
       ],
     );

@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:kac_kisiyiz/locator.dart';
-import 'package:kac_kisiyiz/pages/auth_page.dart';
+import 'package:kac_kisiyiz/pages/auth_page/auth_page.dart';
 import 'package:kac_kisiyiz/services/backend/auth_service.dart';
 import 'package:kac_kisiyiz/services/backend/http_service.dart';
 import 'package:kac_kisiyiz/services/backend/shared_preferences.dart';

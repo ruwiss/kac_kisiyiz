@@ -12,6 +12,4 @@ Unfold All (Ctrl+K Ctrl+J)
 
 Yapılacaklar
 - Splash Screen
-- OneSignal
 - Şifremi Unuttum
-- İnternet yoksa kullanıcı uygulamaya erişemeyecek.

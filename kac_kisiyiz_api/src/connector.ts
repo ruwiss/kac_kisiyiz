@@ -56,8 +56,9 @@ export class Connector {
       "CREATE TABLE IF NOT EXISTS settings (id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255), attr VARCHAR(2000));" +
       "CREATE TABLE IF NOT EXISTS voted (id INT PRIMARY KEY AUTO_INCREMENT, surveyId INT, userId INT, vote VARCHAR(3));" +
       "CREATE TABLE IF NOT EXISTS dailyVoted (id INT PRIMARY KEY AUTO_INCREMENT, userId INT, count INT, dateTime DATETIME);" +
-      "CREATE TABLE IF NOT EXISTS rewarded (id INT PRIMARY KEY AUTO_INCREMENT, surveyId INT, reward DECIMAL(10, 2));";
-    await this.con.query(sql, (err) => {
+      "CREATE TABLE IF NOT EXISTS rewarded (id INT PRIMARY KEY AUTO_INCREMENT, surveyId INT, reward DECIMAL(10, 2));" +
+      "CREATE TABLE IF NOT EXISTS resetPassword (id INT PRIMARY KEY AUTO_INCREMENT, mail VARCHAR(255), code VARCHAR(5), dateTime DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP);";
+    this.con.query(sql, (err) => {
       if (err) throw err;
     });
   }

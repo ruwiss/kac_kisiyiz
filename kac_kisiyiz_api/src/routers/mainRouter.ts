@@ -219,7 +219,7 @@ function routes(router: Router, root: Connector): Router {
       return helper.sendErrorMissingData(res);
 
     const sql = `INSERT INTO categories (name, icon) VALUES ('${args.name}', '${args.icon}')`;
-    root.con.query(sql, (err, result) => {
+    root.con.query(sql, (err) => {
       if (err) return helper.sendError(err, res);
       res.send({ msg: `${args.name} kategorisi eklendi.` });
     });

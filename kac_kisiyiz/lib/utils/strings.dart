@@ -17,6 +17,10 @@ class KStrings {
   static const String authUrl = "$hostUser/auth";
   static const String tokenUrl = "$hostUser/token";
 
+  static const String forgotPassword = "$hostUser/forgotPassword";
+  static const String verifyCode = "$hostUser/verifyCode";
+  static const String resetPassword = "$hostUser/resetPassword";
+
   static const String bankAccount = "$hostApi/bank";
 
   static const String fetchCategoriesUrl = "$hostApi/categories";
