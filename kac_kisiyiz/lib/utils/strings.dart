@@ -5,6 +5,8 @@ class KStrings {
   static const String appOpenId = "ca-app-pub-3940256099942544/3419835294";
   static const String bannerId = "ca-app-pub-3940256099942544/6300978111";
 
+  static const String oneSignalAppId = "2b8c9302-ee74-47e8-b5dc-6d91982a16c6";
+
   // Backend URL's
   static const String hostUser = "http://192.168.1.110:3000/user";
   static const String hostApi = "http://192.168.1.110:3000/api";

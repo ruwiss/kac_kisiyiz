@@ -4,6 +4,7 @@ import 'package:kac_kisiyiz/locator.dart';
 import 'package:kac_kisiyiz/pages/home_page/tabs/categories_tab.dart';
 import 'package:kac_kisiyiz/pages/home_page/tabs/profile/profile_tab.dart';
 import 'package:kac_kisiyiz/services/backend/content_service.dart';
+import 'package:kac_kisiyiz/services/backend/onesignal_api.dart';
 import 'package:kac_kisiyiz/services/functions/admob_ads/app_lifecycle_reactor.dart';
 import 'package:kac_kisiyiz/services/functions/admob_ads/app_open_ad.dart';
 import 'package:kac_kisiyiz/services/functions/admob_ads/interstitial_ad.dart';
@@ -40,7 +41,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  _setAdmobAds() {
+  void _setAdmobAds() {
     // AppOpen
     AppOpenAdManager appOpenAdManager =
         AppOpenAdManager(adUnitId: KStrings.appOpenId)..loadAd();
@@ -61,7 +62,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  _getDatas() async {
+  void _getDatas() async {
     final contentService = locator.get<ContentService>();
     await contentService.getSettings();
     contentService.getSurveys();
@@ -71,7 +72,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     _setAdmobAds();
     _getDatas();
-
+    OneSignalApi.setupOneSignal();
     super.initState();
   }
 
