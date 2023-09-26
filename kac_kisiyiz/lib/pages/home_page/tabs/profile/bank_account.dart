@@ -3,7 +3,6 @@ import 'package:kac_kisiyiz/locator.dart';
 import 'package:kac_kisiyiz/services/backend/auth_service.dart';
 import 'package:kac_kisiyiz/services/backend/content_service.dart';
 import 'package:kac_kisiyiz/services/functions/utils.dart';
-import 'package:kac_kisiyiz/services/models/auth_response_model.dart';
 import 'package:kac_kisiyiz/services/models/categories_model.dart';
 import 'package:kac_kisiyiz/services/models/user_model.dart';
 import 'package:kac_kisiyiz/utils/colors.dart';

@@ -7,10 +7,10 @@ import 'package:kac_kisiyiz/services/backend/http_service.dart';
 import 'package:kac_kisiyiz/services/backend/shared_preferences.dart';
 import 'package:kac_kisiyiz/services/functions/utils.dart';
 import 'package:kac_kisiyiz/services/models/categories_model.dart';
+import 'package:kac_kisiyiz/services/models/settings_model.dart';
 import 'package:kac_kisiyiz/services/models/survey_model.dart';
 import 'package:kac_kisiyiz/services/models/user_model.dart';
 import 'package:kac_kisiyiz/services/providers/home_provider.dart';
-import 'package:kac_kisiyiz/services/providers/settings_provider.dart';
 import 'package:kac_kisiyiz/utils/colors.dart';
 import 'package:kac_kisiyiz/utils/strings.dart';
 import 'package:kac_kisiyiz/widgets/global/survey_widget.dart';
@@ -19,6 +19,7 @@ import 'package:url_launcher/url_launcher.dart';
 class ContentService {
   final _httpService = HttpService();
   final _dio = Dio();
+  final _settingsModel = SettingsModel();
 
   Future getCategories() async {
     final homeProvider = locator.get<HomeProvider>();
@@ -207,9 +208,10 @@ class ContentService {
     }
   }
 
-  Future getPrivacyPolicy() async {
-    final settingsProvider = locator.get<SettingsProvider>();
-    if (settingsProvider.privacyPolicy != null) return;
+  Future<String?> getPrivacyPolicy() async {
+    if (_settingsModel.privacyPolicy != null) {
+      return _settingsModel.privacyPolicy!;
+    }
     final response = await _dio.get(KStrings.privacyPolicy,
         options: Options(responseType: ResponseType.plain));
     if (response.statusCode == 200) {
@@ -217,8 +219,10 @@ class ContentService {
       if (data.contains("<!-- 1 -->")) {
         data = data.split("<!-- 1 -->")[1].split("<!-- 2 -->")[0].trim();
       }
-      settingsProvider.setPrivacyPolicy(data);
+      _settingsModel.privacyPolicy = data;
+      return data;
     }
+    return null;
   }
 
   Future deleteUserAccount(BuildContext context) async {

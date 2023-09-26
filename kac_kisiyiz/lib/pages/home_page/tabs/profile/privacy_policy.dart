@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kac_kisiyiz/locator.dart';
 import 'package:kac_kisiyiz/services/backend/content_service.dart';
-import 'package:kac_kisiyiz/services/providers/settings_provider.dart';
 import 'package:kac_kisiyiz/widgets/global/action_button.dart';
-import 'package:provider/provider.dart';
 
 class PrivacyPolicyWidget extends StatefulWidget {
   const PrivacyPolicyWidget({super.key});
@@ -13,50 +11,54 @@ class PrivacyPolicyWidget extends StatefulWidget {
 }
 
 class _PrivacyPolicyWidgetState extends State<PrivacyPolicyWidget> {
+  String? _privacyPolicy;
+
   @override
   void initState() {
-    locator.get<ContentService>().getPrivacyPolicy();
+    locator.get<ContentService>().getPrivacyPolicy().then((value) {
+      _privacyPolicy = value;
+      setState(() {});
+    });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: const EdgeInsets.all(15),
-        child: Consumer<SettingsProvider>(
-          builder: (context, value, child) => value.privacyPolicy == null
-              ? const Text("Bekleyiniz..")
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const Text(
-                      "Gizlilik Sözleşmesi",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: Text(
-                          value.privacyPolicy!,
-                          style: TextStyle(
-                              color: Colors.black.withOpacity(.8), height: 1.7),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    ActionButton(
-                      text: "Kapat",
-                      onPressed: () => Navigator.pop(context),
-                      backgroundColor: Colors.blueGrey.shade400,
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                    )
-                  ],
+      padding: const EdgeInsets.all(15),
+      child: _privacyPolicy == null
+          ? const Text("Bekleyiniz..")
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Text(
+                  "Gizlilik Sözleşmesi",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-        ));
+                const SizedBox(height: 20),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Text(
+                      _privacyPolicy!,
+                      style: TextStyle(
+                          color: Colors.black.withOpacity(.8), height: 1.7),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                ActionButton(
+                  text: "Kapat",
+                  onPressed: () => Navigator.pop(context),
+                  backgroundColor: Colors.blueGrey.shade400,
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                )
+              ],
+            ),
+    );
   }
 }
 
