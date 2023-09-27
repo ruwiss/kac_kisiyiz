@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:kac_kisiyiz/locator.dart';
 import 'package:kac_kisiyiz/services/backend/auth_service.dart';
 import 'package:kac_kisiyiz/services/backend/shared_preferences.dart';
@@ -33,6 +34,7 @@ class _AuthPageState extends State<AuthPage> {
     } else {
       _showAuthScreen = true;
       setState(() {});
+      FlutterNativeSplash.remove();
     }
   }
 
@@ -50,9 +52,7 @@ class _AuthPageState extends State<AuthPage> {
       child: Scaffold(
         body: BackdropFilterAuth(
           child: !_showAuthScreen
-              ? const CircularProgressIndicator(
-                  color: Colors.white,
-                )
+              ? const CircularProgressIndicator(color: Colors.white)
               : SingleChildScrollView(
                   child: Form(
                     key: _formKey,

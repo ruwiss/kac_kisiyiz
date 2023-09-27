@@ -81,6 +81,7 @@ class AuthService {
         Utils.showInfo(context, message: response.data['msg']);
         final authProvider = locator.get<AuthProvider>();
         authProvider.setCodeVerified(false);
+        authProvider.setCodeInputFiled(false);
       }
     } else {
       if (context.mounted) {

@@ -8,7 +8,7 @@ class AuthProvider with ChangeNotifier {
 
   void startTimerForResetPassword() {
     timerForResetPassword = 120;
-    showCodeInputField = true;
+    setCodeInputFiled(true);
     Timer.periodic(const Duration(seconds: 1), (timer) {
       if (timerForResetPassword == null) {
         timer.cancel();
@@ -21,6 +21,11 @@ class AuthProvider with ChangeNotifier {
         setTimerForResetPassword(timerForResetPassword! - 1);
       }
     });
+  }
+
+  void setCodeInputFiled(bool value) {
+    showCodeInputField = value;
+    notifyListeners();
   }
 
   void setTimerForResetPassword(int? value) {

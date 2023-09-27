@@ -1,5 +1,6 @@
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:kac_kisiyiz/locator.dart';
 import 'package:kac_kisiyiz/pages/home_page/tabs/categories_tab.dart';
 import 'package:kac_kisiyiz/pages/home_page/tabs/profile/profile_tab.dart';
@@ -65,7 +66,8 @@ class _HomePageState extends State<HomePage> {
   void _getDatas() async {
     final contentService = locator.get<ContentService>();
     await contentService.getSettings();
-    contentService.getSurveys();
+    await contentService.getSurveys();
+    FlutterNativeSplash.remove();
   }
 
   @override
