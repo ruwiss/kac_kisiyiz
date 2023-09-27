@@ -1,11 +1,9 @@
 class UserModel {
-  UserModel(this.id, this.mail, this.password, this.name, this.onesignalId,
-      this.bankAccount);
+  UserModel(this.id, this.mail, this.password, this.name, this.bankAccount);
   final int id;
   final String mail;
   String password;
   String name;
-  final String? onesignalId;
   double money = 0;
   int voteCount = 0;
   UserBankModel? bankAccount;
@@ -19,7 +17,6 @@ class UserModel {
             ? (json['money'] as int).toDouble()
             : json['money'],
         voteCount = json['voteCount'] ?? 0,
-        onesignalId = json['onesignalId'],
         bankAccount = json["bankAccount"] == null
             ? null
             : UserBankModel.fromJson(json['bankAccount']);
@@ -29,7 +26,6 @@ class UserModel {
         "mail": mail,
         "password": password,
         "name": name,
-        "onesignalId": onesignalId,
         "money": money,
         "voteCount": voteCount,
         "bankAccount": bankAccount?.toJson(),

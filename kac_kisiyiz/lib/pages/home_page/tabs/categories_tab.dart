@@ -35,49 +35,62 @@ class _CategoriesTabState extends State<CategoriesTab> {
           child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Consumer<HomeProvider>(
-                builder: (context, value, child) => GridView(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 1 / 0.5,
-                    mainAxisSpacing: 35,
-                  ),
-                  shrinkWrap: true,
-                  physics: const BouncingScrollPhysics(),
-                  children: value.categories
-                      .map(
-                        (e) => InkWell(
-                          borderRadius: BorderRadius.circular(kBorderRadius),
-                          splashColor: KColors.primary.withOpacity(0.1),
-                          onTap: () {
-                            value.setCurrentCategoryId(e.id!);
-                            value.setCurrentMenu(MenuItems.kackisiyiz);
-                            locator
-                                .get<ContentService>()
-                                .getSurveys(category: true);
-                          },
-                          child: Column(
-                            children: [
-                              Icon(
-                                IconData(e.iconPoint!,
-                                    fontFamily: "MaterialIcons"),
-                                size: 50,
-                                color: Colors.black.withOpacity(0.65),
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                e.category,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 20,
-                                  color: Colors.black.withOpacity(0.8),
-                                ),
-                              )
-                            ],
-                          ),
+                builder: (context, value, child) => value.categories.isEmpty
+                    ? const Center(
+                        child:
+                            CircularProgressIndicator(color: KColors.primary))
+                    : GridView(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          childAspectRatio: 1 / 0.5,
+                          mainAxisSpacing: 35,
                         ),
-                      )
-                      .toList(),
-                ),
+                        shrinkWrap: true,
+                        physics: const BouncingScrollPhysics(),
+                        children: value.categories
+                            .map(
+                              (e) => InkWell(
+                                borderRadius:
+                                    BorderRadius.circular(kBorderRadius),
+                                splashColor: KColors.primary.withOpacity(0.1),
+                                onTap: () {
+                                  value.setCurrentCategoryId(e.id!);
+                                  value.setCurrentMenu(MenuItems.kackisiyiz);
+                                  locator
+                                      .get<ContentService>()
+                                      .getSurveys(category: true);
+                                },
+                                child: Column(
+                                  children: [
+                                    Icon(
+                                      IconData(e.iconPoint!,
+                                          fontFamily: "MaterialIcons"),
+                                      size: 40,
+                                      color: Colors.black.withOpacity(0.65),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Flexible(
+                                        child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 5),
+                                      child: Text(
+                                        e.category,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          overflow: TextOverflow.visible,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 20,
+                                          color: Colors.black.withOpacity(0.8),
+                                        ),
+                                      ),
+                                    ))
+                                  ],
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      ),
               )),
         ),
         const SizedBox(height: 100)

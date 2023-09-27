@@ -181,7 +181,7 @@ class _HomePageState extends State<HomePage> {
                               shrinkWrap: true,
                               physics: const BouncingScrollPhysics(),
                               itemBuilder: (context, index) => Container(
-                                height: 330,
+                                height: 300,
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 8),
                                 child: SurveyWidget(

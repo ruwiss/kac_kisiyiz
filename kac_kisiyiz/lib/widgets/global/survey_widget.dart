@@ -43,7 +43,7 @@ class SurveyWidget extends StatelessWidget {
                     image: surveyModel.imageUrl,
                     fit: BoxFit.cover,
                     width: double.infinity,
-                    height: 150,
+                    height: 120,
                   )),
               Positioned(
                 right: 5,
@@ -68,7 +68,7 @@ class SurveyWidget extends StatelessWidget {
                   TextSpan(
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 14.5,
+                        fontSize: 13.5,
                         color: Colors.black.withOpacity(.8)),
                     children: [
                       TextSpan(text: surveyModel.title),
@@ -83,19 +83,22 @@ class SurveyWidget extends StatelessWidget {
                   Text(
                     surveyModel.content!,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(fontWeight: FontWeight.w500),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 13,
+                    ),
                   ),
                 ]
               ],
             ),
           ),
-          const Expanded(child: SizedBox()),
           Consumer<HomeProvider>(
             builder: (context, value, child) {
               final bool isVoted = value.isVotedSurvey(surveyModel.id);
-              return Expanded(
+              return Flexible(
                 child: Column(
                   children: [
+                    const Expanded(child: SizedBox()),
                     AnimatedSwitcher(
                         duration: const Duration(seconds: 1),
                         child: isVoted
@@ -112,25 +115,40 @@ class SurveyWidget extends StatelessWidget {
                             : const SizedBox()),
                     const Expanded(child: SizedBox()),
                     AnimatedSwitcher(
-                        duration: const Duration(seconds: 1),
-                        child: !isVoted && !small
-                            ? Row(
+                      duration: const Duration(seconds: 1),
+                      child: !isVoted && !small
+                          ? Padding(
+                              padding: const EdgeInsets.only(bottom: 5),
+                              child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
                                   ActionButton.outlined(
-                                    text: "Yokum",
+                                    text: " Yokum ",
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 13, horizontal: 15),
+                                    textStyle: const TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                     onPressed: () =>
                                         _voteSurvey(context, SurveyChoices.ch1),
                                   ),
                                   ActionButton(
                                     text: "Burdayım!",
+                                    textStyle: const TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                     onPressed: () =>
                                         _voteSurvey(context, SurveyChoices.ch2),
                                   )
                                 ],
-                              )
-                            : const SizedBox()),
+                              ),
+                            )
+                          : const SizedBox(),
+                    ),
                   ],
                 ),
               );
@@ -161,7 +179,7 @@ class SurveyWidget extends StatelessWidget {
         text,
         style: TextStyle(
             fontWeight: FontWeight.w500,
-            fontSize: isUserName ? 10 : 13,
+            fontSize: isUserName ? 10 : 12,
             color: isUserName ? Colors.white : null),
       ),
     );

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { ExpressHelper } from "../functions/expressHelper";
 import { Connector } from "../connector";
+import { RowDataPacket, ResultSetHeader } from "mysql2";
 
 function routes(router: Router, root: Connector): Router {
   const helper = new ExpressHelper();
@@ -13,9 +14,15 @@ function routes(router: Router, root: Connector): Router {
     const sql = keys.includes("name")
       ? `SELECT * FROM settings WHERE name = '${args.name}'`
       : `SELECT * FROM settings`;
-    root.con.query(sql, (err, result) => {
-      if (err) return helper.sendError(err, res);
-      res.send(result);
+    root.con.getConnection((_, con) => {
+      con.query(sql, (err, result) => {
+        if (err) {
+          con.release();
+          return helper.sendError(err, res);
+        }
+        con.release();
+        res.send(result);
+      });
     });
   });
 
@@ -23,13 +30,20 @@ function routes(router: Router, root: Connector): Router {
     const userId = req.body.user.id;
 
     const sql = `SELECT * FROM bank WHERE userId = ${userId}`;
-    root.con.query(sql, (err, result) => {
-      if (err) helper.sendError(err, res);
-      if (result[0]) {
-        res.send(result[0]);
-      } else {
-        res.send({});
-      }
+    root.con.getConnection((_, con) => {
+      con.query<RowDataPacket[]>(sql, (err, result) => {
+        if (err) {
+          con.release();
+          helper.sendError(err, res);
+        }
+        if (result[0]) {
+          con.release();
+          res.send(result[0]);
+        } else {
+          con.release();
+          res.send({});
+        }
+      });
     });
   });
 
@@ -38,27 +52,39 @@ function routes(router: Router, root: Connector): Router {
     if (!keys.includes("id")) return helper.sendErrorMissingData(res);
 
     const sql = `SELECT * FROM surveys WHERE id = ?`;
-    root.con.query(sql, [args.id], (err, result) => {
-      if (err) return helper.sendError(err, res);
-      res.send(result[0]);
+    root.con.getConnection((_, con) => {
+      con.query<RowDataPacket[]>(sql, [args.id], (err, result) => {
+        if (err) {
+          con.release();
+          return helper.sendError(err, res);
+        }
+        con.release();
+        res.send(result[0]);
+      });
     });
   });
 
   router.get("/surveys", (req, res) => {
     const [args, keys] = helper.getArgsByMethod(req);
     let sql: string;
-    let sqlArgs = [];
+    let sqlArgs: any[];
 
     const userId = req.body.user.id;
 
     function getLimit(): number {
       let envLimit = parseInt(process.env.SURVEY_LIMIT as string);
       const sql = `SELECT count FROM dailyvoted WHERE userId = ${userId}`;
-      root.con.query(sql, (err, result) => {
-        if (err) return helper.sendError(err, res);
-        if (result[0]) {
-          envLimit = envLimit - result[0].count;
-        }
+      root.con.getConnection((_, con) => {
+        con.query<RowDataPacket[]>(sql, (err, result) => {
+          if (err) {
+            con.release();
+            return helper.sendError(err, res);
+          }
+          if (result[0]) {
+            con.release();
+            envLimit = envLimit - result[0].count;
+          }
+        });
       });
       return envLimit;
     }
@@ -98,17 +124,29 @@ function routes(router: Router, root: Connector): Router {
       LIMIT ${envLimit};`;
       sqlArgs = [userId];
     }
-    root.con.query(sql, sqlArgs, (err, result) => {
-      if (err) return helper.sendError(err, res);
-      res.json(result);
+    root.con.getConnection((_, con) => {
+      con.query(sql, sqlArgs, (err, result) => {
+        if (err) {
+          con.release();
+          return helper.sendError(err, res);
+        }
+        con.release();
+        res.json(result);
+      });
     });
   });
 
-  router.get("/categories", (req, res) => {
+  router.get("/categories", (_, res) => {
     const sql = `SELECT * FROM categories`;
-    root.con.query(sql, (err, result) => {
-      if (err) return helper.sendError(err, res);
-      res.send(result);
+    root.con.getConnection((_, con) => {
+      con.query(sql, (err, result) => {
+        if (err) {
+          con.release();
+          return helper.sendError(err, res);
+        }
+        con.release();
+        res.send(result);
+      });
     });
   });
 
@@ -117,9 +155,15 @@ function routes(router: Router, root: Connector): Router {
     if (!keys.includes("id")) return helper.sendErrorMissingData(res);
 
     const sql = `SELECT * FROM categories WHERE id = ?`;
-    root.con.query(sql, [args.id], (err, result) => {
-      if (err) return helper.sendError(err, res);
-      res.send(result[0]);
+    root.con.getConnection((_, con) => {
+      con.query<RowDataPacket[]>(sql, [args.id], (err, result) => {
+        if (err) {
+          con.release();
+          return helper.sendError(err, res);
+        }
+        con.release();
+        res.send(result[0]);
+      });
     });
   });
 
@@ -128,9 +172,15 @@ function routes(router: Router, root: Connector): Router {
     if (!keys.includes("id")) return helper.sendErrorMissingData(res);
 
     const sql = `SELECT * FROM rewarded WHERE id = ?`;
-    root.con.query(sql, [args.id], (err, result) => {
-      if (err) return helper.sendError(err, res);
-      res.send(result[0]);
+    root.con.getConnection((_, con) => {
+      con.query<RowDataPacket[]>(sql, [args.id], (err, result) => {
+        if (err) {
+          con.release();
+          return helper.sendError(err, res);
+        }
+        con.release();
+        res.send(result[0]);
+      });
     });
   });
 
@@ -142,9 +192,15 @@ function routes(router: Router, root: Connector): Router {
     const sql = `INSERT INTO settings (name, attr) VALUES (?, ?)`;
     const values = [args.name, args.attr];
 
-    root.con.query(sql, values, (err) => {
-      if (err) return helper.sendError(err, res);
-      res.send({ msg: "Ayarlar kaydedildi." });
+    root.con.getConnection((_, con) => {
+      con.query(sql, values, (err) => {
+        if (err) {
+          con.release();
+          return helper.sendError(err, res);
+        }
+        con.release();
+        res.send({ msg: "Ayarlar kaydedildi." });
+      });
     });
   });
 
@@ -158,25 +214,38 @@ function routes(router: Router, root: Connector): Router {
 
     // Banka hesabı var mı kontrol etme
     const sql = `SELECT id FROM bank WHERE userId = ${userId}`;
-    root.con.query(sql, (err, result) => {
-      if (err) return helper.sendError(err, res);
-      if (result[0]) {
-        const updateSql = `UPDATE bank SET nameSurname = ?, bankName = ?, iban = ? WHERE userId = ${userId}`;
-        const values = [args.nameSurname, args.bankName, args.iban];
+    root.con.getConnection((_, con) => {
+      con.query<RowDataPacket[]>(sql, (err, result) => {
+        if (err) {
+          con.release();
+          return helper.sendError(err, res);
+        }
+        if (result[0]) {
+          const updateSql = `UPDATE bank SET nameSurname = ?, bankName = ?, iban = ? WHERE userId = ${userId}`;
+          const values = [args.nameSurname, args.bankName, args.iban];
 
-        root.con.query(updateSql, values, (err) => {
-          if (err) return helper.sendError(err, res);
-          res.json({ msg: "Ödeme bilgileri güncellendi." });
-        });
-      } else {
-        const insertSql = `INSERT INTO bank (userId, nameSurname, bankName, iban) VALUES ('${userId}', ?, ?, ?)`;
-        const values = [args.nameSurname, args.bankName, args.iban];
+          con.query(updateSql, values, (err) => {
+            if (err) {
+              con.release();
+              return helper.sendError(err, res);
+            }
+            con.release();
+            res.json({ msg: "Ödeme bilgileri güncellendi." });
+          });
+        } else {
+          const insertSql = `INSERT INTO bank (userId, nameSurname, bankName, iban) VALUES ('${userId}', ?, ?, ?)`;
+          const values = [args.nameSurname, args.bankName, args.iban];
 
-        root.con.query(insertSql, values, (err) => {
-          if (err) return helper.sendError(err, res);
-          res.json({ msg: "Banka hesabı kaydedildi." });
-        });
-      }
+          con.query(insertSql, values, (err) => {
+            if (err) {
+              con.release();
+              return helper.sendError(err, res);
+            }
+            con.release();
+            res.json({ msg: "Banka hesabı kaydedildi." });
+          });
+        }
+      });
     });
   });
 
@@ -205,9 +274,15 @@ function routes(router: Router, root: Connector): Router {
       isPending,
     ];
 
-    root.con.query(sql, values, (err, result) => {
-      if (err) return helper.sendError(err, res);
-      res.send({ msg: "Anket başarıyla eklendi." });
+    root.con.getConnection((_, con) => {
+      con.query(sql, values, (err) => {
+        if (err) {
+          con.release();
+          return helper.sendError(err, res);
+        }
+        con.release();
+        res.send({ msg: "Anket başarıyla eklendi." });
+      });
     });
   });
 
@@ -219,9 +294,15 @@ function routes(router: Router, root: Connector): Router {
       return helper.sendErrorMissingData(res);
 
     const sql = `INSERT INTO categories (name, icon) VALUES ('${args.name}', '${args.icon}')`;
-    root.con.query(sql, (err) => {
-      if (err) return helper.sendError(err, res);
-      res.send({ msg: `${args.name} kategorisi eklendi.` });
+    root.con.getConnection((_, con) => {
+      con.query(sql, (err) => {
+        if (err) {
+          con.release();
+          return helper.sendError(err, res);
+        }
+        con.release();
+        res.send({ msg: `${args.name} kategorisi eklendi.` });
+      });
     });
   });
 
@@ -232,9 +313,15 @@ function routes(router: Router, root: Connector): Router {
       return helper.sendErrorMissingData(res);
 
     const sql = `INSERT INTO rewarded (surveyId, reward) VALUES ('${args.surveyId}', '${args.reward}')`;
-    root.con.query(sql, (err) => {
-      if (err) return helper.sendError(err, res);
-      res.send({ msg: `Ödüllü anket ${args.reward}₺ olarak eklendi.` });
+    root.con.getConnection((_, con) => {
+      con.query(sql, (err) => {
+        if (err) {
+          con.release();
+          return helper.sendError(err, res);
+        }
+        con.release();
+        res.send({ msg: `Ödüllü anket ${args.reward}₺ olarak eklendi.` });
+      });
     });
   });
 
@@ -245,9 +332,15 @@ function routes(router: Router, root: Connector): Router {
       return helper.sendErrorMissingData(res);
 
     const sql = `UPDATE settings SET attr = '${args.attr}' WHERE name = '${args.name}'`;
-    root.con.query(sql, (err) => {
-      if (err) return helper.sendError(err, res);
-      res.send({ msg: `${args.name} Başarıyla güncellendi.` });
+    root.con.getConnection((_, con) => {
+      con.query(sql, (err) => {
+        if (err) {
+          con.release();
+          return helper.sendError(err, res);
+        }
+        con.release();
+        res.send({ msg: `${args.name} Başarıyla güncellendi.` });
+      });
     });
   });
 
@@ -258,10 +351,16 @@ function routes(router: Router, root: Connector): Router {
       return helper.sendErrorMissingData(res);
 
     const sql = `UPDATE categories SET name = '${args.name}', icon='${args.icon}' WHERE id = '${args.id}'`;
-    root.con.query(sql, (err) => {
-      if (err) return helper.sendError(err, res);
-      res.send({
-        msg: `id(${args.id}) ${args.name} olarak başarıyla güncellendi`,
+    root.con.getConnection((_, con) => {
+      con.query(sql, (err) => {
+        if (err) {
+          con.release();
+          return helper.sendError(err, res);
+        }
+        con.release();
+        res.send({
+          msg: `id(${args.id}) ${args.name} olarak başarıyla güncellendi`,
+        });
       });
     });
   });
@@ -279,37 +378,55 @@ function routes(router: Router, root: Connector): Router {
     const sql = `UPDATE surveys SET ${args.vote} = ${args.vote} + 1 WHERE id = ?`;
     const values = [args.id];
 
-    root.con.query(sql, values, (err) => {
-      if (err) return helper.sendError(err, res);
+    root.con.getConnection((_, con) => {
+      con.query(sql, values, (err) => {
+        if (err) {
+          con.release();
+          return helper.sendError(err, res);
+        }
 
-      // Kullanıcı oylarına, kullanıcıyı ekleme işlemi
-      const sql = `INSERT INTO voted (surveyId, userId, vote) VALUES (?, ?, ?)`;
-      const values = [args.id, userId, args.vote];
-      root.con.query(sql, values, (err) => {
-        if (err) return helper.sendError(err, res);
-
-        // Kullanıcının günlük yaptığı oylama sayısında arttırma işlemi
-        const sql = `SELECT * FROM dailyvoted WHERE userId = ${userId}`;
-        root.con.query(sql, (err, result) => {
-          if (err) return helper.sendError(err, res);
-          let dailyVotedSql: string;
-          if (result[0]) {
-            // Patch
-            const mysqlDate = new Date(result[0].dateTime);
-            const currentDate = new Date();
-            const isSameDay = helper.areDatesOnSameDay(mysqlDate, currentDate);
-            if (isSameDay) {
-              dailyVotedSql = `UPDATE dailyvoted SET count = count + 1 WHERE userId = ${userId}`;
-            } else {
-              dailyVotedSql = `UPDATE dailyvoted SET count = 1, dateTime = CURRENT_TIMESTAMP WHERE userId = ${userId}`;
-            }
-          } else {
-            // Insert
-            dailyVotedSql = `INSERT INTO dailyvoted (userId, count, dateTime) VALUES (${userId}, ${1}, CURRENT_TIMESTAMP)`;
+        // Kullanıcı oylarına, kullanıcıyı ekleme işlemi
+        const sql = `INSERT INTO voted (surveyId, userId, vote) VALUES (?, ?, ?)`;
+        const values = [args.id, userId, args.vote];
+        con.query(sql, values, (err) => {
+          if (err) {
+            con.release();
+            return helper.sendError(err, res);
           }
-          root.con.query(dailyVotedSql, (err) => {
-            if (err) return helper.sendError(err, res);
-            return res.status(200).json({ msg: "Oy verildi." });
+
+          // Kullanıcının günlük yaptığı oylama sayısında arttırma işlemi
+          const sql = `SELECT * FROM dailyvoted WHERE userId = ${userId}`;
+          con.query<RowDataPacket[]>(sql, (err, result) => {
+            if (err) {
+              con.release();
+              return helper.sendError(err, res);
+            }
+            let dailyVotedSql: string;
+            if (result[0]) {
+              // Patch
+              const mysqlDate = new Date(result[0].dateTime);
+              const currentDate = new Date();
+              const isSameDay = helper.areDatesOnSameDay(
+                mysqlDate,
+                currentDate
+              );
+              if (isSameDay) {
+                dailyVotedSql = `UPDATE dailyvoted SET count = count + 1 WHERE userId = ${userId}`;
+              } else {
+                dailyVotedSql = `UPDATE dailyvoted SET count = 1, dateTime = CURRENT_TIMESTAMP WHERE userId = ${userId}`;
+              }
+            } else {
+              // Insert
+              dailyVotedSql = `INSERT INTO dailyvoted (userId, count, dateTime) VALUES (${userId}, ${1}, CURRENT_TIMESTAMP)`;
+            }
+            con.query(dailyVotedSql, (err) => {
+              if (err) {
+                con.release();
+                return helper.sendError(err, res);
+              }
+              con.release();
+              return res.status(200).json({ msg: "Oy verildi." });
+            });
           });
         });
       });
@@ -317,15 +434,21 @@ function routes(router: Router, root: Connector): Router {
   });
 
   router.patch("/userMoney", (req, res) => {
-    const [args, keys] = helper.getArgsByMethod(req);
+    const [args] = helper.getArgsByMethod(req);
     const userId = req.body.user.id;
 
     const sql = `UPDATE users SET money = money + ? WHERE id = ?`;
     const values = [args.moneyAmount, userId];
 
-    root.con.query(sql, values, (err) => {
-      if (err) return helper.sendError(err, res);
-      return res.status(200).json({ msg: "OK" });
+    root.con.getConnection((_, con) => {
+      con.query(sql, values, (err) => {
+        if (err) {
+          con.release();
+          return helper.sendError(err, res);
+        }
+        con.release();
+        return res.status(200).json({ msg: "OK" });
+      });
     });
   });
 
@@ -333,8 +456,8 @@ function routes(router: Router, root: Connector): Router {
     const [args, keys] = helper.getArgsByMethod(req);
     if (!keys[0]) return helper.sendErrorMissingData(res);
     const user = req.body.user;
-    let sql;
-    let values;
+    let sql: string;
+    let values: any[];
 
     const wrongPassword = () =>
       res.status(401).json({ msg: "Mevcut şifreniz yanlış." });
@@ -355,9 +478,15 @@ function routes(router: Router, root: Connector): Router {
       return helper.sendErrorMissingData(res);
     }
 
-    root.con.query(sql, values, (err) => {
-      if (err) return helper.sendError(err, res);
-      res.json({ msg: "Bilgileriniz güncellendi." });
+    root.con.getConnection((_, con) => {
+      con.query(sql, values, (err) => {
+        if (err) {
+          con.release();
+          return helper.sendError(err, res);
+        }
+        con.release();
+        res.json({ msg: "Bilgileriniz güncellendi." });
+      });
     });
   });
 
@@ -368,9 +497,15 @@ function routes(router: Router, root: Connector): Router {
     if (!keys.includes("name")) return helper.sendErrorMissingData(res);
 
     const sql = `DELETE FROM settings WHERE name = '${args.name}'`;
-    root.con.query(sql, (err) => {
-      if (err) helper.sendError(err, res);
-      res.send({ msg: `${args.name} silindi.` });
+    root.con.getConnection((_, con) => {
+      con.query(sql, (err) => {
+        if (err) {
+          con.release();
+          return helper.sendError(err, res);
+        }
+        con.release();
+        res.send({ msg: `${args.name} silindi.` });
+      });
     });
   });
 
@@ -379,21 +514,34 @@ function routes(router: Router, root: Connector): Router {
     if (!keys.includes("id")) return helper.sendErrorMissingData(res);
 
     const sql = `DELETE FROM rewarded WHERE id='${args.id}'`;
-    root.con.query(sql, (err) => {
-      if (err) return helper.sendError(err, res);
-      res.send({ msg: `Ödül kaldırıldı.` });
+    root.con.getConnection((_, con) => {
+      con.query(sql, (err) => {
+        if (err) {
+          con.release();
+          return helper.sendError(err, res);
+        }
+        con.release();
+        res.send({ msg: `Ödül kaldırıldı.` });
+      });
     });
   });
 
   router.delete("/bank", (req, res) => {
     const sql = `DELETE FROM bank WHERE userId = ${req.body.user.id}`;
-    root.con.query(sql, (err, result) => {
-      if (err) return helper.sendError(err, res);
-      if (result.affectedRows > 0) {
-        res.send({ msg: "Ödeme yöntemi silindi." });
-      } else {
-        res.send({ msg: "Zaten kayıtlı bir ödeme yöntemi yok." });
-      }
+    root.con.getConnection((_, con) => {
+      con.query<ResultSetHeader>(sql, (err, result) => {
+        if (err) {
+          con.release();
+          return helper.sendError(err, res);
+        }
+        if (result.affectedRows > 0) {
+          con.release();
+          res.send({ msg: "Ödeme yöntemi silindi." });
+        } else {
+          con.release();
+          res.send({ msg: "Zaten kayıtlı bir ödeme yöntemi yok." });
+        }
+      });
     });
   });
 
@@ -405,9 +553,15 @@ function routes(router: Router, root: Connector): Router {
       `DELETE FROM dailyvoted WHERE userId = ${userId};` +
       `DELETE FROM voted WHERE userId = ${userId};`;
 
-    root.con.query(sql, (err) => {
-      if (err) return helper.sendError(err, res);
-      res.json({ msg: "Hesabınız kalıcı olarak silindi." });
+    root.con.getConnection((_, con) => {
+      con.query(sql, (err) => {
+        if (err) {
+          con.release();
+          return helper.sendError(err, res);
+        }
+        con.release();
+        res.json({ msg: "Hesabınız kalıcı olarak silindi." });
+      });
     });
   });
 

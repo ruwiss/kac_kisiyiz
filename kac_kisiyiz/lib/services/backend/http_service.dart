@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:kac_kisiyiz/locator.dart';
 import 'package:kac_kisiyiz/services/backend/auth_service.dart';
@@ -35,6 +37,9 @@ class HttpService {
       final response = await req(url,
           data: withArgs ? null : data,
           queryParameters: withArgs ? data : null);
+      if (response.statusCode != 200) {
+        log(response.data.toString());
+      }
       return response;
     }
     return null;

@@ -8,8 +8,3 @@ npx ts-node ./src/index.ts
 Fold All (Ctrl+K Ctrl+0)
 
 Unfold All (Ctrl+K Ctrl+J)
-
-
-Yapılacaklar
-- Splash Screen
-- Şifremi Unuttum

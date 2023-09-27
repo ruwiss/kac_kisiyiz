@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import mysql from "mysql";
 import jwt from "jsonwebtoken";
+import { QueryError } from "mysql2";
 
 export class ExpressHelper {
   debug!: boolean;
@@ -8,7 +8,7 @@ export class ExpressHelper {
     this.debug = true;
   }
 
-  sendError(err: mysql.MysqlError, res: Response) {
+  sendError(err: QueryError, res: Response) {
     console.log(err.message);
     res.status(500).send({
       code: err.errno,

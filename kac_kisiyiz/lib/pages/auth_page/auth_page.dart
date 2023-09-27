@@ -46,8 +46,6 @@ class _AuthPageState extends State<AuthPage> {
 
   @override
   Widget build(BuildContext context) {
-    _tMail.text = "omer670067@gmail.com";
-    _tPass.text = "1234567890";
     return SafeArea(
       child: Scaffold(
         body: BackdropFilterAuth(
