@@ -25,7 +25,7 @@ class _CreateSurveyWidgetState extends State<CreateSurveyWidget> {
     locator.get<ContentService>().getCategories();
     super.initState();
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return Container(

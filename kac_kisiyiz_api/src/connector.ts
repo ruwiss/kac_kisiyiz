@@ -39,6 +39,9 @@ export class Connector {
       database: process.env.DATABASE,
       multipleStatements: true,
       connectionLimit: 10,
+      maxIdle: 10,
+      idleTimeout: 60000,
+      queueLimit: 0,
       waitForConnections: true,
       typeCast: function (field, next) {
         if (field.type == "NEWDECIMAL") {
@@ -65,10 +68,8 @@ export class Connector {
       "CREATE TABLE IF NOT EXISTS rewarded (id INT PRIMARY KEY AUTO_INCREMENT, surveyId INT, reward DECIMAL(10, 2));" +
       "CREATE TABLE IF NOT EXISTS resetpassword (id INT PRIMARY KEY AUTO_INCREMENT, mail VARCHAR(255), code VARCHAR(5), dateTime DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP);";
 
-    this.con.getConnection((_, con) => {
-      con.query<RowDataPacket[]>(sql, () => {
-        con.release();
-      });
+    this.con.query<RowDataPacket[]>(sql, (err) => {
+      if (err) throw err;
     });
   }
 
@@ -95,14 +96,11 @@ export class Connector {
         WHERE NOT EXISTS (SELECT 1 FROM settings WHERE name = '${v.name}');`
     );
 
-    this.con.getConnection((_, con) => {
-      for (let i = 0; i < insertQueries.length; i++) {
-        con.query(insertQueries[i], (err) => {
-          con.release();
-          if (err) throw err;
-        });
-      }
-    });
+    for (let i = 0; i < insertQueries.length; i++) {
+      this.con.query(insertQueries[i], (err) => {
+        if (err) throw err;
+      });
+    }
 
     // Ayarlar Bitiş
 
@@ -123,10 +121,8 @@ export class Connector {
         ("Takıntılar", "0xf04c5"),("Teknoloji", "0xe32c"),("Televizyon", "0xe687"),("Trendler", "0xe67f"),("Ulaşım", "0xe1f3"),("Yarışmalar", "0xe63f"),("Yatırım", "0xea44"),("Yaşam", "0xf07a0"),
         ("Yemek", "0xe2aa"),("Yolculuk", "0xe55e"),("YouTube", "0xe6a1"), ("İletişim", "0xe3c4"),("İlişkiler", "0xf0838"),("İçecek", "0xe391"),("İş Hayatı", "0xe6f2"),("Şans", "0xe7fc"),("Şehirler", "0xe3a8");`;
 
-        this.con.getConnection((_, con) => {
-          this.con.query(insertSql, () => {
-            con.release();
-          });
+        this.con.query(insertSql, (err) => {
+          if (err) throw err;
         });
       }
     });

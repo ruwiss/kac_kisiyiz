@@ -11,7 +11,7 @@ class KStrings {
 /*   static const String hostUser = "http://192.168.1.110:3000/user";
   static const String hostApi = "http://192.168.1.110:3000/api"; */
   static const String hostUser = "https://kackisiyiz.codestock.net/user";
-  static const String hostApi = "https://kackisiyiz.codestock.net/api";
+  static const String hostApi = "http://kackisiyiz.codestock.net/api";
 
   static const String privacyPolicy = "$hostUser/privacyPolicy";
   static const String settings = "$hostApi/settings";

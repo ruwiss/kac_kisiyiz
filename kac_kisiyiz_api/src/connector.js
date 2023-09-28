@@ -48,6 +48,9 @@ class Connector {
                 database: process.env.DATABASE,
                 multipleStatements: true,
                 connectionLimit: 10,
+                maxIdle: 10,
+                idleTimeout: 60000,
+                queueLimit: 0,
                 waitForConnections: true,
                 typeCast: function (field, next) {
                     if (field.type == "NEWDECIMAL") {
@@ -72,10 +75,9 @@ class Connector {
                 "CREATE TABLE IF NOT EXISTS dailyvoted (id INT PRIMARY KEY AUTO_INCREMENT, userId INT, count INT, dateTime DATETIME);" +
                 "CREATE TABLE IF NOT EXISTS rewarded (id INT PRIMARY KEY AUTO_INCREMENT, surveyId INT, reward DECIMAL(10, 2));" +
                 "CREATE TABLE IF NOT EXISTS resetpassword (id INT PRIMARY KEY AUTO_INCREMENT, mail VARCHAR(255), code VARCHAR(5), dateTime DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP);";
-            this.con.getConnection((_, con) => {
-                con.query(sql, () => {
-                    con.release();
-                });
+            this.con.query(sql, (err) => {
+                if (err)
+                    throw err;
             });
         });
     }
@@ -99,15 +101,12 @@ class Connector {
             const insertQueries = datas.map((v) => `INSERT INTO settings (name, attr)
         SELECT '${v.name}', '${v.attr}'
         WHERE NOT EXISTS (SELECT 1 FROM settings WHERE name = '${v.name}');`);
-            this.con.getConnection((_, con) => {
-                for (let i = 0; i < insertQueries.length; i++) {
-                    con.query(insertQueries[i], (err) => {
-                        con.release();
-                        if (err)
-                            throw err;
-                    });
-                }
-            });
+            for (let i = 0; i < insertQueries.length; i++) {
+                this.con.query(insertQueries[i], (err) => {
+                    if (err)
+                        throw err;
+                });
+            }
             // Ayarlar Bitiş
             // Kategoriler Başlangıç
             const categoriesSql = `SELECT id FROM categories LIMIT 1`;
@@ -125,10 +124,9 @@ class Connector {
         ("Sanat", "0xe9db"),("Sağlık", "0xf17e"),("Sağlık Hizmetleri", "0xe396"),("Seyahat", "0xf0113"),("Sinema", "0xe40f"),("Sosyal Medya", "0xe5d1"),("Spor", "0xe2fd"),("Tabular", "0xe333"),
         ("Takıntılar", "0xf04c5"),("Teknoloji", "0xe32c"),("Televizyon", "0xe687"),("Trendler", "0xe67f"),("Ulaşım", "0xe1f3"),("Yarışmalar", "0xe63f"),("Yatırım", "0xea44"),("Yaşam", "0xf07a0"),
         ("Yemek", "0xe2aa"),("Yolculuk", "0xe55e"),("YouTube", "0xe6a1"), ("İletişim", "0xe3c4"),("İlişkiler", "0xf0838"),("İçecek", "0xe391"),("İş Hayatı", "0xe6f2"),("Şans", "0xe7fc"),("Şehirler", "0xe3a8");`;
-                    this.con.getConnection((_, con) => {
-                        this.con.query(insertSql, () => {
-                            con.release();
-                        });
+                    this.con.query(insertSql, (err) => {
+                        if (err)
+                            throw err;
                     });
                 }
             });
