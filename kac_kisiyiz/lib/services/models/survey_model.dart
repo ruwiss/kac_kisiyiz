@@ -4,7 +4,7 @@ class SurveyModel {
     required this.category,
     required this.categoryId,
     required this.userId,
-    required this.userName,
+    this.userName,
     required this.title,
     this.content,
     required this.imageUrl,
@@ -18,7 +18,7 @@ class SurveyModel {
   final String category;
   final int categoryId;
   final int userId;
-  final String userName;
+  final String? userName;
   final String title;
   final String? content;
   final String imageUrl;
@@ -42,4 +42,19 @@ class SurveyModel {
         isRewarded = json['isRewarded'].runtimeType == int
             ? (json['isRewarded'] as int).toDouble()
             : json['isRewarded'];
+
+  factory SurveyModel.dummy() => SurveyModel(
+        id: 0,
+        category: "Örnek Kategori",
+        categoryId: 1,
+        userId: 1,
+        userName: "İsim Soyisim",
+        title: "Örnek başlık metni. " * 2,
+        imageUrl: "",
+        choice1: 0,
+        choice2: 0,
+        content:
+            "Örnek içerik metni ve bu içeriğin boş bir yazı olmaması haricinde sorun yok." *
+                2,
+      );
 }

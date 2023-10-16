@@ -9,6 +9,7 @@ import 'package:kac_kisiyiz/services/models/auth_response_model.dart';
 import 'package:kac_kisiyiz/services/providers/auth_provider.dart';
 import 'package:kac_kisiyiz/services/providers/home_provider.dart';
 import 'package:kac_kisiyiz/utils/strings.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 class AuthService {
   final _dio = Dio();
@@ -113,15 +114,25 @@ class AuthService {
       response = await _dio.get(KStrings.authUrl,
           queryParameters: {"mail": mail, "password": password});
     } else {
-      response = await _dio.post(KStrings.authUrl,
-          data: {"name": name, "mail": mail, "password": password});
+      response = await _dio.post(KStrings.authUrl, data: {
+        "name": name,
+        "mail": mail,
+        "password": password,
+        "onesignalId": OneSignal.User.pushSubscription.id
+      });
+      if (response.statusCode != 200) {
+        Utils.stopLoading(context);
+        resultData = AuthResponse.fromJson(response.data);
+        Utils.showError(context, error: resultData.msg);
+        return;
+      }
     }
     if (!isLogin) {
+      Utils.stopLoading(context);
       auth(context: context, mail: mail, password: password, isLogin: true);
       return;
     }
     resultData = AuthResponse.fromJson(response.data);
-    locator.get<MyDB>().saveUser(resultData);
 
     Utils.stopLoading(context);
 
@@ -129,6 +140,7 @@ class AuthService {
       Utils.showError(context, error: resultData.msg);
       return;
     }
+    locator.get<MyDB>().saveUser(resultData);
 
     Navigator.of(context).pushReplacementNamed("/home");
   }
@@ -137,7 +149,7 @@ class AuthService {
     final navigator = Navigator.of(context);
 
     await locator.get<MyDB>().deleteUser();
-
+    OneSignal.logout();
     locator.get<HomeProvider>().setCurrentMenu(MenuItems.kackisiyiz);
     navigator.pushNamedAndRemoveUntil("/", (route) => route is AuthPage);
   }

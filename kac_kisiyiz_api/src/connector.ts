@@ -2,6 +2,7 @@ import express, { Application } from "express";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import mysql, { ConnectionOptions, RowDataPacket, Pool } from "mysql2";
+import cors from "cors";
 
 export class Connector {
   app: Application;
@@ -16,6 +17,7 @@ export class Connector {
   middlewares() {
     this.app.set("api_secret_key", process.env.API_SECRET_KEY);
     this.app.set("token_expire", process.env.TOKEN_EXPIRE);
+    this.app.use(cors());
     this.app.use(morgan("dev"));
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(express.json());
@@ -57,7 +59,7 @@ export class Connector {
 
   private async createTables() {
     const sql =
-      "CREATE TABLE IF NOT EXISTS users (id INT PRIMARY KEY AUTO_INCREMENT, mail VARCHAR(255), password VARCHAR(255), name VARCHAR(255), money DECIMAL(10, 2) NOT NULL DEFAULT '0.00');" +
+      "CREATE TABLE IF NOT EXISTS users (id INT PRIMARY KEY AUTO_INCREMENT, mail VARCHAR(255), password VARCHAR(255), name VARCHAR(255), money DECIMAL(10, 2) NOT NULL DEFAULT '0.00', onesignalId VARCHAR(255));" +
       "CREATE TABLE IF NOT EXISTS bank (id INT PRIMARY KEY AUTO_INCREMENT, userId VARCHAR(255), nameSurname VARCHAR(255), bankName VARCHAR(255), iban VARCHAR(30));" +
       "CREATE TABLE IF NOT EXISTS categories (id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255), icon VARCHAR(20));" +
       "CREATE TABLE IF NOT EXISTS surveys (id INT PRIMARY KEY AUTO_INCREMENT, categoryId INT, userId INT, title VARCHAR(255), content VARCHAR(1000), image VARCHAR(250), ch1 INT, ch2 INT, adLink VARCHAR(255), isRewarded DECIMAL(10, 2), isPending BOOL);" +
@@ -79,6 +81,10 @@ export class Connector {
       {
         name: "surveyLimit",
         attr: process.env.SURVEY_LIMIT,
+      },
+      {
+        name: "appOpenAd",
+        attr: process.env.APP_OPEN_AD,
       },
       {
         name: "surveyAdDisplayCount",

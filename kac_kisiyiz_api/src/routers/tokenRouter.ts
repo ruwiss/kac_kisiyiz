@@ -44,12 +44,10 @@ function tokenRouter(router: Router, root: Connector): Router {
       }
 
       // Kullanıcı kaydı oluşturma
-      const insertSql = `INSERT INTO users (mail, password, name) VALUES (?, ?, ?)`;
-      const values = [args.mail, args.password, args.name];
+      const insertSql = `INSERT INTO users (mail, password, name, onesignalId) VALUES (?, ?, ?, ?)`;
+      const values = [args.mail, args.password, args.name, args.onesignalId];
       root.con.query<ResultSetHeader>(insertSql, values, (err, fields) => {
-        if (err) {
-          res.status(502).json({ msg: err.message });
-        }
+        if (err) return helper.sendError(err, res);
 
         return res.json({
           msg: "Kayıt işlemi başarılı.",

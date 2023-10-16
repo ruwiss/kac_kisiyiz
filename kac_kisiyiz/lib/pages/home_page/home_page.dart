@@ -6,6 +6,7 @@ import 'package:kac_kisiyiz/pages/home_page/tabs/categories_tab.dart';
 import 'package:kac_kisiyiz/pages/home_page/tabs/profile/profile_tab.dart';
 import 'package:kac_kisiyiz/services/backend/content_service.dart';
 import 'package:kac_kisiyiz/services/backend/onesignal_api.dart';
+import 'package:kac_kisiyiz/services/extensions/string_extensions.dart';
 import 'package:kac_kisiyiz/services/functions/admob_ads/app_lifecycle_reactor.dart';
 import 'package:kac_kisiyiz/services/functions/admob_ads/app_open_ad.dart';
 import 'package:kac_kisiyiz/services/functions/admob_ads/interstitial_ad.dart';
@@ -18,6 +19,7 @@ import 'package:kac_kisiyiz/utils/strings.dart';
 import 'package:kac_kisiyiz/widgets/features/home/filter_button.dart';
 import 'package:kac_kisiyiz/widgets/global/bottom_menu.dart';
 import 'package:kac_kisiyiz/widgets/global/input_widgets/input_container.dart';
+import 'package:kac_kisiyiz/widgets/global/shimmer_survey_widget.dart';
 import 'package:kac_kisiyiz/widgets/global/survey_widget.dart';
 import 'package:kac_kisiyiz/widgets/global/title_widget.dart';
 import 'package:provider/provider.dart';
@@ -44,26 +46,27 @@ class _HomePageState extends State<HomePage> {
 
   void _setAdmobAds() {
     // AppOpen
-    AppOpenAdManager appOpenAdManager =
-        AppOpenAdManager(adUnitId: KStrings.appOpenId)..loadAd();
-    AppLifecycleReactor(appOpenAdManager: appOpenAdManager)
-        .listenToAppStateChanges();
+    AppOpenAdManager appOpenAdManager = AppOpenAdManager(adUnitId: KStrings.appOpenId)..loadAd();
+    AppLifecycleReactor(appOpenAdManager: appOpenAdManager).listenToAppStateChanges();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Utils.startLoading(context, text: "Hoşgeldiniz");
-      // Interstitial
-      final interstitialAdManager =
-          InterstitialAdManager(adUnitId: KStrings.insertstitialId);
-      interstitialAdManager.load(
-        onLoaded: (ad) {
-          Utils.stopLoading(context);
-          ad.show();
-        },
-        onError: () => Utils.stopLoading(context),
-      );
+      // appOpenAd Permission
+      final bool appOpenAd = locator<ContentService>().settings.singleWhere((e) => e.name == "appOpenAd").name.parseStringBool();
+      if (appOpenAd) {
+        Utils.startLoading(context, text: "Hoşgeldiniz");
+        // Interstitial
+        final interstitialAdManager = InterstitialAdManager(adUnitId: KStrings.insertstitialId);
+        interstitialAdManager.load(
+          onLoaded: (ad) {
+            Utils.stopLoading(context);
+            ad.show();
+          },
+          onError: () => Utils.stopLoading(context),
+        );
+      }
     });
   }
 
-  void _getDatas() async {
+  Future _getDatas() async {
     final contentService = locator.get<ContentService>();
     await contentService.getSettings();
     await contentService.getSurveys();
@@ -72,8 +75,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    _setAdmobAds();
-    _getDatas();
+    _getDatas().then((_) => _setAdmobAds());
     OneSignalApi.setupOneSignal();
     super.initState();
   }
@@ -87,8 +89,7 @@ class _HomePageState extends State<HomePage> {
             Consumer<HomeProvider>(
               builder: (context, value, child) => Column(
                 children: [
-                  if (value.surveyLoading)
-                    const LinearProgressIndicator(color: KColors.primary),
+                  if (value.surveyLoading) const LinearProgressIndicator(color: KColors.primary),
                   Expanded(
                     child: switch (value.currentMenu) {
                       (MenuItems.kackisiyiz) => _kacKisiyizTab(value),
@@ -131,9 +132,7 @@ class _HomePageState extends State<HomePage> {
                     onTap: _setCurrentFilter,
                   )
                 : FilterButton(
-                    text: provider
-                        .getCategoryFromId(provider.currentCategoryId)
-                        .category,
+                    text: provider.getCategoryFromId(provider.currentCategoryId).category,
                     filter: Filters.category,
                     currentFilter: _currentFilter,
                     onTap: _setCurrentFilter,
@@ -146,8 +145,7 @@ class _HomePageState extends State<HomePage> {
             final List<SurveyModel> items = switch (_currentFilter) {
               Filters.yeniler => value.surveys,
               Filters.katilimlar => value.votedSurveys,
-              Filters.category =>
-                value.categorySurveys[value.currentCategoryId] ?? []
+              Filters.category => value.categorySurveys[value.currentCategoryId] ?? []
             };
             return Container(
               child: _currentFilter != Filters.katilimlar
@@ -159,37 +157,44 @@ class _HomePageState extends State<HomePage> {
                         physics: const BouncingScrollPhysics(),
                         scale: 0.9,
                         itemBuilder: (context, index) => value.surveyLoading
-                            ? _infoWidget("Bekleyiniz..")
+                            ? const ShimmerSurveyWidget()
                             : items.isEmpty
-                                ? _infoWidget(
-                                    "Katılabileceğiniz bir anket bulunamadı.")
+                                ? Container(
+                                    decoration: const BoxDecoration(
+                                      image: DecorationImage(
+                                        opacity: .35,
+                                        image: AssetImage(KImages.surveyPlaceholder),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    child: _infoWidget("Katılabileceğiniz bir anket bulunamadı."),
+                                  )
                                 : index != items.length
                                     ? SurveyWidget(
-                                        small: _currentFilter ==
-                                            Filters.katilimlar,
+                                        small: _currentFilter == Filters.katilimlar,
                                         surveyModel: items[index],
                                       )
-                                    : _infoWidget(
-                                        "Bu günlük daha fazla ankete katılamazsınız."),
+                                    : _infoWidget("Bu günlük daha fazla ankete katılamazsınız."),
                       ),
                     )
                   : Expanded(
-                      child: items.isEmpty
-                          ? _infoWidget("Henüz bir ankete katılmadınız.")
-                          : ListView.builder(
-                              itemCount: items.length,
-                              shrinkWrap: true,
-                              physics: const BouncingScrollPhysics(),
-                              itemBuilder: (context, index) => Container(
-                                height: 300,
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8),
-                                child: SurveyWidget(
-                                  small: _currentFilter == Filters.katilimlar,
-                                  surveyModel: items[index],
+                      child: value.surveyLoading
+                          ? const ShimmerSurveyWidget(small: true)
+                          : items.isEmpty
+                              ? _infoWidget("Henüz bir ankete katılmadınız.")
+                              : ListView.builder(
+                                  itemCount: items.length,
+                                  shrinkWrap: true,
+                                  physics: const BouncingScrollPhysics(),
+                                  itemBuilder: (context, index) => Container(
+                                    height: 300,
+                                    padding: const EdgeInsets.symmetric(vertical: 8),
+                                    child: SurveyWidget(
+                                      small: _currentFilter == Filters.katilimlar,
+                                      surveyModel: items[index],
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
                     ),
             );
           },

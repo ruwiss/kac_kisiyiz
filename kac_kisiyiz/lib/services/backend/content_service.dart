@@ -15,6 +15,7 @@ import 'package:kac_kisiyiz/services/providers/home_provider.dart';
 import 'package:kac_kisiyiz/utils/colors.dart';
 import 'package:kac_kisiyiz/utils/strings.dart';
 import 'package:kac_kisiyiz/widgets/global/survey_widget.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ContentService {
@@ -274,12 +275,12 @@ class ContentService {
 
       locator.unregister<AuthService>();
       locator.unregister<ContentService>();
-
+  
       locator.registerSingleton<AuthService>(AuthService());
       locator.registerSingleton<ContentService>(ContentService());
 
       locator.get<MyDB>().deleteUser();
-
+      OneSignal.logout();
       navigator.pop();
       navigator.pushNamedAndRemoveUntil("/", (route) => route is AuthPage);
     }

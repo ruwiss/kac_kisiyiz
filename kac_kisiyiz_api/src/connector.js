@@ -17,6 +17,7 @@ const express_1 = __importDefault(require("express"));
 const morgan_1 = __importDefault(require("morgan"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const mysql2_1 = __importDefault(require("mysql2"));
+const cors_1 = __importDefault(require("cors"));
 class Connector {
     constructor() {
         dotenv_1.default.config();
@@ -26,6 +27,7 @@ class Connector {
     middlewares() {
         this.app.set("api_secret_key", process.env.API_SECRET_KEY);
         this.app.set("token_expire", process.env.TOKEN_EXPIRE);
+        this.app.use((0, cors_1.default)());
         this.app.use((0, morgan_1.default)("dev"));
         this.app.use(express_1.default.urlencoded({ extended: true }));
         this.app.use(express_1.default.json());
@@ -65,7 +67,7 @@ class Connector {
     }
     createTables() {
         return __awaiter(this, void 0, void 0, function* () {
-            const sql = "CREATE TABLE IF NOT EXISTS users (id INT PRIMARY KEY AUTO_INCREMENT, mail VARCHAR(255), password VARCHAR(255), name VARCHAR(255), money DECIMAL(10, 2) NOT NULL DEFAULT '0.00');" +
+            const sql = "CREATE TABLE IF NOT EXISTS users (id INT PRIMARY KEY AUTO_INCREMENT, mail VARCHAR(255), password VARCHAR(255), name VARCHAR(255), money DECIMAL(10, 2) NOT NULL DEFAULT '0.00', onesignalId VARCHAR(255));" +
                 "CREATE TABLE IF NOT EXISTS bank (id INT PRIMARY KEY AUTO_INCREMENT, userId VARCHAR(255), nameSurname VARCHAR(255), bankName VARCHAR(255), iban VARCHAR(30));" +
                 "CREATE TABLE IF NOT EXISTS categories (id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255), icon VARCHAR(20));" +
                 "CREATE TABLE IF NOT EXISTS surveys (id INT PRIMARY KEY AUTO_INCREMENT, categoryId INT, userId INT, title VARCHAR(255), content VARCHAR(1000), image VARCHAR(250), ch1 INT, ch2 INT, adLink VARCHAR(255), isRewarded DECIMAL(10, 2), isPending BOOL);" +
@@ -88,6 +90,10 @@ class Connector {
                 {
                     name: "surveyLimit",
                     attr: process.env.SURVEY_LIMIT,
+                },
+                {
+                    name: "appOpenAd",
+                    attr: process.env.APP_OPEN_AD,
                 },
                 {
                     name: "surveyAdDisplayCount",

@@ -1,0 +1,5 @@
++ Anket ekleme bölümü
++ Gelen anketleri inceleme ve onaylama, bildirim gönderme bölümü
++ Kategori düzenleme bölümü
+- Analiz bölümü (top 5 kullanıcı)
+     Ödeme yapma, bildirim gönderme bölümü

@@ -62,7 +62,7 @@ class HomeProvider with ChangeNotifier {
     if (choice == SurveyChoices.ch1) surveyModel.choice1++;
     if (choice == SurveyChoices.ch2) surveyModel.choice2++;
 
-    votedSurveys.add(surveyModel);
+    votedSurveys.insert(0, surveyModel);
 
     if (categorySurveys.containsKey(surveyModel.id)) {
       categorySurveys.remove(surveyModel.id);

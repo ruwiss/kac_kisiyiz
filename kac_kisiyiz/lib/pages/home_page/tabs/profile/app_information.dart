@@ -26,7 +26,7 @@ Kaç Kişiyiz? uygulaması, kullanıcılara eğlenceli anketler sunarak gündemd
 
 Uygulama içerisinde anketleri yanıtlayarak para kazanabilirsiniz. Günlük olarak sınırlandırılmış $surveyLimit anketten bazılarında ödül bulunmaktadır.
 
-Ayrıca profil bölümünde bulunan "Anket Oluştur" butonuyla kendi anketlerinizi oluşturabilir ve bize destekte bulunabilirsiniz. Ayrıca oluşturduğunuz anketlere bağlı olarak ödüllendirilebilirsiniz.
+Ayrıca profil bölümünde bulunan "Anket Oluştur" butonuyla kendi anketlerinizi oluşturabilir ve bize destekte bulunabilirsiniz. Oluşturduğunuz anketlere bağlı olarak ödüllendirilebilirsiniz.
 
 Birikimleriniz $withdrawalLimit₺'e ulaştığında, profil kısmında belirttiğiniz banka hesabına ödemeniz gerçekleşecektir.
 

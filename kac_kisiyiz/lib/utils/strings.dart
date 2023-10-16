@@ -8,8 +8,8 @@ class KStrings {
   static const String oneSignalAppId = "2b8c9302-ee74-47e8-b5dc-6d91982a16c6";
 
   // Backend URL's
-/*   static const String hostUser = "http://192.168.1.110:3000/user";
-  static const String hostApi = "http://192.168.1.110:3000/api"; */
+  //static const String hostUser = "http://192.168.1.112:3000/user";
+  //static const String hostApi = "http://192.168.1.112:3000/api";
   static const String hostUser = "https://kackisiyiz.codestock.net/user";
   static const String hostApi = "http://kackisiyiz.codestock.net/api";
 

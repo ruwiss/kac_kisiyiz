@@ -30,14 +30,26 @@ function routes(router: Router, root: Connector): Router {
     const sql = `SELECT * FROM bank WHERE userId = ${userId}`;
 
     root.con.query<RowDataPacket[]>(sql, (err, result) => {
-      if (err) {
-        helper.sendError(err, res);
-      }
+      if (err) return helper.sendError(err, res);
+
       if (result[0]) {
-        res.send(result[0]);
+        return res.json(result[0]);
       } else {
-        res.send({});
+        return res.json({});
       }
+    });
+  });
+
+  router.get("/topUsers", (_, res) => {
+    const sql = `SELECT u.*, b.nameSurname, b.bankName, b.iban, v.voteCount
+    FROM users u
+    LEFT JOIN bank b ON b.userId = u.id
+    LEFT JOIN (SELECT userId, COUNT(id) as voteCount FROM voted GROUP BY userId) v ON v.userId = u.id
+    ORDER BY money DESC
+    LIMIT 5;`;
+    root.con.query(sql, (err, result) => {
+      if (err) return helper.sendError(err, res);
+      return res.json(result);
     });
   });
 
@@ -62,11 +74,11 @@ function routes(router: Router, root: Connector): Router {
     let sqlArgs: any[];
 
     const userId = req.body.user.id;
+    const forPanel = keys.includes("forPanel");
 
     function getLimit(): number {
       let envLimit = parseInt(process.env.SURVEY_LIMIT as string);
       const sql = `SELECT count FROM dailyvoted WHERE userId = ${userId}`;
-
       root.con.query<RowDataPacket[]>(sql, (err, result) => {
         if (err) {
           return helper.sendError(err, res);
@@ -76,6 +88,7 @@ function routes(router: Router, root: Connector): Router {
       });
       return envLimit;
     }
+    userId;
 
     if (keys.includes("voted")) {
       sql = `SELECT s.id, s.categoryId, c.name AS category, u.name AS userName, s.userId, s.title, s.image, s.ch1, s.ch2
@@ -99,6 +112,18 @@ function routes(router: Router, root: Connector): Router {
       ORDER BY s.ch2 DESC
       LIMIT ${envLimit};`;
       sqlArgs = [userId, args.categoryId];
+    } else if (forPanel) {
+      const extra = !keys.includes("search")
+        ? ""
+        : `WHERE s.title LIKE '%${args.search}%'`;
+      sql = `SELECT s.*,  c.name AS category, u.name AS userName
+      FROM surveys s
+      LEFT JOIN categories c ON s.categoryId = c.id
+      LEFT JOIN users u ON s.userId = u.id
+      ${extra}
+      ORDER BY s.isPending DESC
+      LIMIT ${process.env.SURVEY_LIMIT};`;
+      sqlArgs = [userId];
     } else {
       const envLimit = getLimit();
       if (envLimit < 1) return res.send([]);
@@ -123,7 +148,7 @@ function routes(router: Router, root: Connector): Router {
   });
 
   router.get("/categories", (_, res) => {
-    const sql = `SELECT * FROM categories`;
+    const sql = `SELECT * FROM categories ORDER BY name ASC`;
 
     root.con.query(sql, (err, result) => {
       if (err) {
@@ -225,7 +250,10 @@ function routes(router: Router, root: Connector): Router {
     const [args, keys] = helper.getArgsByMethod(req);
     const requirements = ["categoryId", "title", "content"];
 
-    const userId = keys.includes("userId") ? args.userId : req.body.user.id;
+    const userId =
+      keys.includes("userId") && args.userId != null && args.userId != ""
+        ? args.userId
+        : req.body.user.id;
 
     if (!helper.listContainsList(keys, requirements))
       return helper.sendErrorMissingData(res);
@@ -388,9 +416,48 @@ function routes(router: Router, root: Connector): Router {
     });
   });
 
+  router.patch("/editSurvey", (req, res) => {
+    const [args, keys] = helper.getArgsByMethod(req);
+    const requirements = [
+      "id",
+      "categoryId",
+      "title",
+      "content",
+      "image",
+      "userId",
+      "adLink",
+      "isRewarded",
+    ];
+
+    if (!helper.listContainsList(keys, requirements))
+      return helper.sendErrorMissingData(res);
+    const sql = `UPDATE surveys SET categoryId = ?, title = ?, content = ?, image = ?, userId = ?, adLink = ?, isRewarded = ?, isPending = ? WHERE id = ?`;
+    const values = [
+      args.categoryId,
+      args.title,
+      args.content,
+      args.image,
+      args.userId,
+      args.adLink ?? "",
+      args.isRewarded ?? 0.0,
+      0,
+      args.id,
+    ];
+
+    root.con.query(sql, values, (err) => {
+      if (err) {
+        return helper.sendError(err, res);
+      } else {
+        return res.status(200).json({ msg: "OK" });
+      }
+    });
+  });
+
   router.patch("/userMoney", (req, res) => {
-    const [args] = helper.getArgsByMethod(req);
-    const userId = req.body.user.id;
+    const [args, keys] = helper.getArgsByMethod(req);
+    const userId = keys.includes("userId") ? args.userId : req.body.user.id;
+
+    console.log(args.moneyAmount);
 
     const sql = `UPDATE users SET money = money + ? WHERE id = ?`;
     const values = [args.moneyAmount, userId];
@@ -452,6 +519,36 @@ function routes(router: Router, root: Connector): Router {
         return helper.sendError(err, res);
       } else {
         return res.json({ msg: `${args.name} silindi.` });
+      }
+    });
+  });
+
+  router.delete("/surveyData", (req, res) => {
+    const [args, keys] = helper.getArgsByMethod(req);
+
+    if (!keys.includes("id")) return helper.sendErrorMissingData(res);
+
+    const sql = `DELETE FROM surveys WHERE id = '${args.name}'`;
+
+    root.con.query(sql, (err) => {
+      if (err) {
+        return helper.sendError(err, res);
+      } else {
+        return res.json({ msg: "OK" });
+      }
+    });
+  });
+
+  router.delete("/categoryData", (req, res) => {
+    const [args, keys] = helper.getArgsByMethod(req);
+    if (!keys.includes("id")) return helper.sendErrorMissingData(res);
+
+    const sql = `DELETE FROM categories WHERE id = ${args.id}`;
+    root.con.query(sql, (err) => {
+      if (err) {
+        return helper.sendError(err, res);
+      } else {
+        return res.json({ msg: `Kategori kaldırıldı.` });
       }
     });
   });

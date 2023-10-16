@@ -9,8 +9,7 @@ class Utils {
       builder: (BuildContext context) {
         return SimpleDialog(
           elevation: 0,
-          backgroundColor:
-              Colors.transparent, // can change this to your prefered color
+          backgroundColor: Colors.transparent, // can change this to your prefered color
           children: [
             Center(
               child: Column(
@@ -39,6 +38,7 @@ class Utils {
       SnackBar(
         action: SnackBarAction(
           label: 'Kapat',
+          textColor: Colors.white,
           onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),
         ),
         backgroundColor: Colors.red,
@@ -47,8 +47,7 @@ class Utils {
     );
   }
 
-  static Future showInfo(BuildContext context,
-      {required String message}) async {
+  static Future showInfo(BuildContext context, {required String message}) async {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         backgroundColor: Colors.green,
@@ -70,9 +69,7 @@ class Utils {
         title: Text(title),
         content: Text(message),
         actions: [
-          ElevatedButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text("İptal")),
+          ElevatedButton(onPressed: () => Navigator.of(context).pop(), child: const Text("İptal")),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);

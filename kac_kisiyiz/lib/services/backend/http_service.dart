@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:kac_kisiyiz/locator.dart';
 import 'package:kac_kisiyiz/services/backend/auth_service.dart';
@@ -24,7 +23,7 @@ class HttpService {
 
     final bool withArgs = method == HttpMethod.get;
 
-    final String token = locator.get<AuthService>().resultData.token!;
+    final String? token = locator.get<AuthService>().resultData.token;
 
     final tokenResponse =
         await _dio.post(KStrings.tokenUrl, data: {"mainToken": token});

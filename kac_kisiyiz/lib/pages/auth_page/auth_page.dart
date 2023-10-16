@@ -79,7 +79,7 @@ class _AuthPageState extends State<AuthPage> {
                         if (_authType == AuthType.register)
                           InputField(
                             controller: _tName,
-                            hintText: "Ad Soyadınız",
+                            hintText: "İsminiz",
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return "İsmi boş bırakmayınız.";
