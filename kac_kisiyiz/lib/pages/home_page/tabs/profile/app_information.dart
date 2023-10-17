@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kac_kisiyiz/locator.dart';
 import 'package:kac_kisiyiz/services/backend/content_service.dart';
+import 'package:kac_kisiyiz/utils/strings.dart';
 import 'package:kac_kisiyiz/widgets/global/action_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -16,10 +17,8 @@ class _AppInformationWidgetState extends State<AppInformationWidget> {
 
   void _setText() {
     final settings = locator.get<ContentService>().settings;
-    final surveyLimit =
-        settings.singleWhere((e) => e.name == "surveyLimit").attr;
-    final withdrawalLimit =
-        settings.singleWhere((e) => e.name == "withdrawalLimit").attr;
+    final surveyLimit = settings.singleWhere((e) => e.name == "surveyLimit").attr;
+    final withdrawalLimit = settings.singleWhere((e) => e.name == "withdrawalLimit").attr;
 
     _text = """
 Kaç Kişiyiz? uygulaması, kullanıcılara eğlenceli anketler sunarak gündemden haberdar olmalarını ve güzel vakit geçirip pasif gelir elde etmelerini amaçlar.
@@ -64,22 +63,18 @@ Ne kadar çok kullanıcı, o kadar kazanç demek. Bu nedenle, uygulamaya Play St
               children: [
                 Text(
                   _text ?? "",
-                  style: TextStyle(
-                      color: Colors.black.withOpacity(.8), height: 1.5),
+                  style: TextStyle(color: Colors.black.withOpacity(.8), height: 1.5),
                 ),
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context);
-                    final url = Uri.parse(
-                        "https://play.google.com/store/apps/details?id=com.rw.kackisiyiz");
+                    final url = Uri.parse(KStrings.appUrl);
                     launchUrl(url, mode: LaunchMode.externalApplication);
                   },
-                  style: TextButton.styleFrom(
-                      backgroundColor: Colors.indigo.withOpacity(.12)),
+                  style: TextButton.styleFrom(backgroundColor: Colors.indigo.withOpacity(.12)),
                   child: Text(
                     "Uygulamaya yıldız vermek için tıklayın",
-                    style: TextStyle(
-                        color: Colors.black.withOpacity(.7), height: 1.5),
+                    style: TextStyle(color: Colors.black.withOpacity(.7), height: 1.5),
                   ),
                 ),
               ],
@@ -99,9 +94,5 @@ Ne kadar çok kullanıcı, o kadar kazanç demek. Bu nedenle, uygulamaya Play St
 }
 
 void showAppInformationBottomSheet(BuildContext context) {
-  showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      builder: (context) => const AppInformationWidget());
+  showModalBottomSheet(context: context, isScrollControlled: true, useSafeArea: true, builder: (context) => const AppInformationWidget());
 }

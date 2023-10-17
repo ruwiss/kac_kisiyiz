@@ -18,9 +18,10 @@ enum SurveyChoices {
 }
 
 class SurveyWidget extends StatefulWidget {
-  const SurveyWidget({super.key, required this.surveyModel, this.small = false});
+  const SurveyWidget({super.key, required this.surveyModel, this.small = false, this.shimmer = false});
   final SurveyModel surveyModel;
   final bool small;
+  final bool shimmer;
 
   @override
   State<SurveyWidget> createState() => _SurveyWidgetState();
@@ -87,7 +88,7 @@ class _SurveyWidgetState extends State<SurveyWidget> {
                   maxLines: 4,
                   textAlign: TextAlign.center,
                   TextSpan(
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5, color: Colors.black.withOpacity(.8)),
+                    style: TextStyle(fontWeight: FontWeight.bold, backgroundColor: widget.shimmer ? Colors.grey : null, fontSize: 13.5, color: Colors.black.withOpacity(.8)),
                     children: [
                       TextSpan(text: widget.surveyModel.title),
                       const TextSpan(text: " Kaç Kişiyiz?", style: TextStyle(color: KColors.primary))
@@ -99,9 +100,10 @@ class _SurveyWidgetState extends State<SurveyWidget> {
                   Text(
                     widget.surveyModel.content!,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: 13,
+                      backgroundColor: widget.shimmer ? Colors.grey : null,
                     ),
                   ),
                 ]

@@ -1,11 +1,11 @@
 class KStrings {
   // Admob Ads
-  static const String insertstitialId =
-      "ca-app-pub-3940256099942544/1033173712";
-  static const String appOpenId = "ca-app-pub-3940256099942544/3419835294";
-  static const String bannerId = "ca-app-pub-3940256099942544/6300978111";
+  static const String insertstitialId = "ca-app-pub-1923752572867502/5103781771";
+  static const String appOpenId = "ca-app-pub-1923752572867502/9718594454";
 
   static const String oneSignalAppId = "2b8c9302-ee74-47e8-b5dc-6d91982a16c6";
+
+  static const String appUrl = "https://play.google.com/store/apps/details?id=com.rw.kackisiyiz";
 
   // Backend URL's
   //static const String hostUser = "http://192.168.1.112:3000/user";

@@ -7,4 +7,5 @@ class KImages {
       "assets/images/survey_placeholder.png";
   static const String profileSmile = "assets/images/smile.png";
   static const String profilePattern = "assets/images/profile_pattern.png";
+  static const String cafee = "assets/images/caffee.png";
 }

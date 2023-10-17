@@ -3,7 +3,11 @@ import 'package:kac_kisiyiz/services/models/categories_model.dart';
 import 'package:kac_kisiyiz/services/models/survey_model.dart';
 import 'package:kac_kisiyiz/widgets/global/survey_widget.dart';
 
-enum MenuItems { kackisiyiz, kategoriler, profilim }
+enum MenuItems {
+  kackisiyiz,
+  kategoriler,
+  profilim
+}
 
 class HomeProvider with ChangeNotifier {
   MenuItems currentMenu = MenuItems.kackisiyiz;
@@ -14,7 +18,7 @@ class HomeProvider with ChangeNotifier {
   List<SurveyModel> votedSurveys = [];
   Map<int, List<SurveyModel>> categorySurveys = {};
 
-  bool surveyLoading = false;
+  bool surveyLoading = true;
 
   void setLoading(bool v) {
     surveyLoading = v;

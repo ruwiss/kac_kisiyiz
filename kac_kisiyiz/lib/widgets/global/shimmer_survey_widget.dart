@@ -12,6 +12,6 @@ class ShimmerSurveyWidget extends StatelessWidget {
     return Shimmer.fromColors(
         baseColor: Colors.grey.shade100,
         highlightColor: Colors.grey.shade200,
-        child: SurveyWidget(surveyModel: SurveyModel.dummy(), small: small));
+        child: SurveyWidget(surveyModel: SurveyModel.dummy(), small: small, shimmer: true));
   }
 }

@@ -113,6 +113,9 @@ function routes(router: Router, root: Connector): Router {
       LIMIT ${envLimit};`;
       sqlArgs = [userId, args.categoryId];
     } else if (forPanel) {
+      // [pending] or [rewarded]
+      const filter = args.filter;
+
       const extra = !keys.includes("search")
         ? ""
         : `WHERE s.title LIKE '%${args.search}%'`;
@@ -121,7 +124,7 @@ function routes(router: Router, root: Connector): Router {
       LEFT JOIN categories c ON s.categoryId = c.id
       LEFT JOIN users u ON s.userId = u.id
       ${extra}
-      ORDER BY s.isPending DESC
+      ORDER BY ${filter == "pending" ? "s.isPending" : "s.isRewarded"} DESC
       LIMIT ${process.env.SURVEY_LIMIT};`;
       sqlArgs = [userId];
     } else {
@@ -528,7 +531,7 @@ function routes(router: Router, root: Connector): Router {
 
     if (!keys.includes("id")) return helper.sendErrorMissingData(res);
 
-    const sql = `DELETE FROM surveys WHERE id = '${args.name}'`;
+    const sql = `DELETE FROM surveys WHERE id = '${args.id}'`;
 
     root.con.query(sql, (err) => {
       if (err) {

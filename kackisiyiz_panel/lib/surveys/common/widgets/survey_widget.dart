@@ -6,7 +6,8 @@ import '../../../core/models/survey_model.dart';
 
 class SurveyWidget extends StatefulWidget {
   final SurveyModel surveyModel;
-  const SurveyWidget({super.key, required this.surveyModel});
+  final Function()? onDelete;
+  const SurveyWidget({super.key, required this.surveyModel, this.onDelete});
 
   @override
   State<SurveyWidget> createState() => _SurveyWidgetState();
@@ -17,6 +18,8 @@ class _SurveyWidgetState extends State<SurveyWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isPending = widget.surveyModel.isPending;
+    final double? rewarded = widget.surveyModel.isRewarded;
     return InkWell(
       borderRadius: BorderRadius.circular(8),
       onTap: () {},
@@ -28,7 +31,7 @@ class _SurveyWidgetState extends State<SurveyWidget> {
             width: double.infinity,
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: context.secondaryColor,
+              color: isPending ? Colors.brown[900] : context.secondaryColor,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: Colors.white12),
             ),
@@ -52,18 +55,17 @@ class _SurveyWidgetState extends State<SurveyWidget> {
               right: 0,
               child: Row(
                 children: [
+                  if (rewarded != null && rewarded != 0.0) Text("$rewarded ₺"),
                   IconButton(
                     onPressed: () {
-                      context.pushReplacement(Uri(
-                              path: "/addSurvey",
-                              queryParameters:
-                                  widget.surveyModel.toJsonString())
-                          .toString());
+                      context.pushReplacement(Uri(path: "/addSurvey", queryParameters: widget.surveyModel.toJsonString()).toString());
                     },
                     icon: const Icon(Icons.article, size: 17),
                   ),
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      if (widget.onDelete != null) widget.onDelete!();
+                    },
                     icon: const Icon(Icons.close, size: 17, color: Colors.red),
                   ),
                 ],

@@ -53,8 +53,7 @@ class PaymentsView extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SelectableText(
-                          "${topUserModel.nameSurname ?? topUserModel.name}  ${topUserModel.mail}\nPara: ${topUserModel.money} ₺  Oy Sayısı: ${topUserModel.voteCount}\nBanka: ${topUserModel.bankName}  IBAN: ${topUserModel.iban}"),
+                      SelectableText("${topUserModel.nameSurname ?? topUserModel.name}  ${topUserModel.mail}\nPara: ${topUserModel.money} ₺  Oy Sayısı: ${topUserModel.voteCount}\nBanka: ${topUserModel.bankName}  IBAN: ${topUserModel.iban}"),
                       const SizedBox(height: 10),
                       Align(
                         alignment: Alignment.centerRight,

@@ -21,4 +21,8 @@ class MyDB {
 
     return AuthResponse.fromJson(json.decode(user));
   }
+
+  bool homePageAppVoteButtonClicked() => prefs.containsKey("homePageAppVoteButton");
+
+  void setHomePageAppVoteButtonClicked() => prefs.setBool("homePageAppVoteButton", true);
 }

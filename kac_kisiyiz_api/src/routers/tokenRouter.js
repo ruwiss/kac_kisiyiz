@@ -78,6 +78,9 @@ function tokenRouter(router, root) {
     router.get("/privacyPolicy", (_, res) => {
         res.sendFile(path_1.default.join(__dirname + "/docs/privacyPolicy.html"));
     });
+    router.get("/deleteAccount", (_, res) => {
+        res.sendFile(path_1.default.join(__dirname + "/docs/deleteAccount.html"));
+    });
     router.post("/forgotPassword", (req, res) => {
         const [args, keys] = helper.getArgsByMethod(req);
         if (!keys.includes("mail"))

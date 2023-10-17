@@ -22,6 +22,8 @@ class _AuthPageState extends State<AuthPage> {
   AuthType _authType = AuthType.login;
   bool _showAuthScreen = false;
 
+  
+
   final _tName = TextEditingController();
   final _tMail = TextEditingController();
   final _tPass = TextEditingController();
@@ -29,7 +31,9 @@ class _AuthPageState extends State<AuthPage> {
   void _getUserFromDevice() async {
     final user = locator.get<MyDB>().getUser();
     if (user != null) {
-      locator.get<AuthService>().resultData = user;
+      final authService = locator<AuthService>();
+      authService.resultData = user;
+      authService.auth(context: context, mail: user.user!.mail, password: user.user!.password, isLogin: true);
       Navigator.pushNamed(context, "/home");
     } else {
       _showAuthScreen = true;
@@ -68,9 +72,7 @@ class _AuthPageState extends State<AuthPage> {
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 25),
                           child: Text(
-                            _authType == AuthType.login
-                                ? "Kazandıran anket uygulamasına hoş geldin!"
-                                : "Bilgileri doldurarak katılabilirsiniz.",
+                            _authType == AuthType.login ? "Kazandıran anket uygulamasına hoş geldin!" : "Bilgileri doldurarak katılabilirsiniz.",
                             textAlign: TextAlign.center,
                             style: const TextStyle(color: Colors.black87),
                           ),
@@ -115,8 +117,7 @@ class _AuthPageState extends State<AuthPage> {
                           Align(
                             alignment: Alignment.centerRight,
                             child: TextButton(
-                              onPressed: () => Navigator.pushNamed(
-                                  context, "/forgotPassword"),
+                              onPressed: () => Navigator.pushNamed(context, "/forgotPassword"),
                               child: const Text(
                                 "Şifremi Unuttum",
                                 style: TextStyle(
@@ -132,11 +133,7 @@ class _AuthPageState extends State<AuthPage> {
                             text: "Devam et",
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
-                                locator.get<AuthService>().auth(
-                                    context: context,
-                                    isLogin: true,
-                                    mail: _tMail.text,
-                                    password: _tPass.text);
+                                locator.get<AuthService>().auth(context: context, isLogin: true, mail: _tMail.text, password: _tPass.text);
                               }
                             },
                           ),
@@ -145,12 +142,7 @@ class _AuthPageState extends State<AuthPage> {
                             text: "Aramıza Katıl",
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
-                                locator.get<AuthService>().auth(
-                                    context: context,
-                                    isLogin: false,
-                                    name: _tName.text,
-                                    mail: _tMail.text,
-                                    password: _tPass.text);
+                                locator.get<AuthService>().auth(context: context, isLogin: false, name: _tName.text, mail: _tMail.text, password: _tPass.text);
                               }
                             },
                           ),

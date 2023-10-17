@@ -36,11 +36,7 @@ class Utils {
   static Future showError(BuildContext context, {String? error}) async {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        action: SnackBarAction(
-          label: 'Kapat',
-          textColor: Colors.white,
-          onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),
-        ),
+        duration: const Duration(seconds: 2),
         backgroundColor: Colors.red,
         content: Text(error ?? "Bir sorun oluştu."),
       ),
