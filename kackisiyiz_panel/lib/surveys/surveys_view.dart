@@ -36,38 +36,39 @@ class _SurveysViewState extends State<SurveysView> {
       builder: (context, model, child) => SafeArea(
         child: Scaffold(
           body: Padding(
-            padding: const EdgeInsets.all(25),
-            child: model.state == ViewState.busy
-                ? const Center(child: Text("Bekleyiniz.."))
-                : model.surveys == null
-                    ? const Text("Bir sorun oluştu")
-                    : Column(
-                        children: [
-                          TextFieldInput(
-                            hint: "Arama yap",
-                            controller: _tSearch,
-                            suffixIcon: IconButton(
-                              onPressed: () {
-                                if (_tSearch.text.isNotEmpty) {
-                                  model.getSurveys(searchText: _tSearch.text, selectedFilter: _selectedFilter);
-                                }
-                              },
-                              icon: const Icon(Icons.search, size: 20),
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              padding: const EdgeInsets.all(25),
+              child: Center(
+                child: model.state == ViewState.busy
+                    ? const Text("Bekleyiniz..")
+                    : model.surveys == null
+                        ? const Text("Bir sorun oluştu")
+                        : Column(
                             children: [
-                              _filterButton(SelectedFilter.pending, "Gönderilenler"),
-                              _filterButton(SelectedFilter.rewarded, "Ödüllü Anketler"),
+                              TextFieldInput(
+                                hint: "Arama yap",
+                                controller: _tSearch,
+                                suffixIcon: IconButton(
+                                  onPressed: () {
+                                    if (_tSearch.text.isNotEmpty) {
+                                      model.getSurveys(searchText: _tSearch.text, selectedFilter: _selectedFilter);
+                                    }
+                                  },
+                                  icon: const Icon(Icons.search, size: 20),
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  _filterButton(SelectedFilter.pending, "Gönderilenler"),
+                                  _filterButton(SelectedFilter.rewarded, "Ödüllü Anketler"),
+                                ],
+                              ),
+                              const SizedBox(height: 20),
+                              _listWidget(model),
                             ],
                           ),
-                          const SizedBox(height: 20),
-                          _listWidget(model),
-                        ],
-                      ),
-          ),
+              )),
         ),
       ),
     );

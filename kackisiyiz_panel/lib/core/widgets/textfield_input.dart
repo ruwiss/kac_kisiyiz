@@ -38,7 +38,7 @@ class TextFieldInput extends StatelessWidget {
         maxLines: multiLine ? 5 : 1,
         decoration: InputDecoration(
           suffix: suffix,
-          suffixIcon: Padding(padding: const EdgeInsets.only(right: 10), child: suffixIcon),
+          suffixIcon: suffix == null ? null : Padding(padding: const EdgeInsets.only(right: 10), child: suffixIcon),
           filled: true,
           fillColor: context.secondaryColor,
           hintText: hint,

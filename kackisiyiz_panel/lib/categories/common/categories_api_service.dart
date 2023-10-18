@@ -1,6 +1,6 @@
 import 'package:kackisiyiz_panel/core/services/category_api_service.dart';
 import 'package:kackisiyiz_panel/core/services/http_service.dart';
-import '../../add_survey/common/models/category_model.dart';
+import '../../core/models/category_model.dart';
 import '../../core/app/locator.dart';
 import '../../core/constants/hosts.dart';
 

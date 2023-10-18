@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:kackisiyiz_panel/core/extensions/context_extensions.dart';
 import 'package:kackisiyiz_panel/core/extensions/string_extensions.dart';
-import 'package:kackisiyiz_panel/add_survey/common/models/category_model.dart';
+import 'package:kackisiyiz_panel/core/models/category_model.dart';
 import 'package:kackisiyiz_panel/core/widgets/textfield_input.dart';
 
 class CategoryWidget extends StatefulWidget {
@@ -20,6 +20,7 @@ class CategoryWidget extends StatefulWidget {
 class _CategoryWidgetState extends State<CategoryWidget> {
   bool _showButton = false;
   bool _editMode = false;
+  final _tTitle = TextEditingController();
   final _tIcon = TextEditingController();
 
   void _showButtonsVisibility({bool? value, bool isHover = false}) {
@@ -37,6 +38,7 @@ class _CategoryWidgetState extends State<CategoryWidget> {
   void _save() {
     if (widget.onChanged != null) {
       var c = widget.categoryModel;
+      if (c.name.isEmpty) c.name = _tTitle.text;
       c.iconData = _tIcon.text;
       widget.onChanged!(c);
     }
@@ -55,10 +57,10 @@ class _CategoryWidgetState extends State<CategoryWidget> {
     return InkWell(
       onTap: () {
         _showButtonsVisibility();
+        _tTitle.clear();
         _tIcon.clear();
       },
       onHover: (value) => _showButtonsVisibility(value: value, isHover: true),
-      mouseCursor: MouseCursor.defer,
       child: Stack(
         alignment: Alignment.center,
         children: [
@@ -75,10 +77,11 @@ class _CategoryWidgetState extends State<CategoryWidget> {
                   )
                 : Row(
                     children: [
+                      if (widget.categoryModel.name.isEmpty) Flexible(child: TextFieldInput(hint: "Başlık", controller: _tTitle)),
                       Flexible(child: TextFieldInput(hint: "iconData", controller: _tIcon)),
                       Platform.isAndroid ? IconButton(onPressed: () => _save(), icon: const Icon(Icons.save)) : TextButton(onPressed: () => _save(), child: const Text("Kaydet")),
                       if (widget.categoryModel.id != null) Platform.isAndroid ? IconButton(onPressed: () => _delete(), icon: const Icon(Icons.close)) : TextButton(onPressed: () => _delete(), child: const Text("Sil")),
-                      TextButton(onPressed: () => setState(() => _editMode = false), child: const Text("İptal"))
+                      Platform.isAndroid ? IconButton(onPressed: () => setState(() => _editMode = false), icon: const Icon(Icons.arrow_forward_ios)) : TextButton(onPressed: () => setState(() => _editMode = false), child: const Text("İptal"))
                     ],
                   ),
           ),

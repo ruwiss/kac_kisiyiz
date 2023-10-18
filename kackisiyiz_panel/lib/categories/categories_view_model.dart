@@ -1,5 +1,5 @@
 import 'package:kackisiyiz_panel/categories/common/categories_api_service.dart';
-import 'package:kackisiyiz_panel/add_survey/common/models/category_model.dart';
+import 'package:kackisiyiz_panel/core/models/category_model.dart';
 import 'package:kackisiyiz_panel/core/app/base_view_model.dart';
 
 class CategoriesViewModel extends BaseViewModel {

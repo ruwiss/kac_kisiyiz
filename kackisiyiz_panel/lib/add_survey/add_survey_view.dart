@@ -100,9 +100,7 @@ class _AddSurveyViewState extends State<AddSurveyView> {
                           ),
                           TextFieldInput(hint: 'Resim', controller: _tImage),
                           const SizedBox(height: 25),
-                          Flexible(
-                            child: TextFieldInput(dontValidate: true, hint: 'Reklam URL', controller: _tAdLink),
-                          ),
+                          TextFieldInput(dontValidate: true, hint: 'Reklam URL', controller: _tAdLink),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [

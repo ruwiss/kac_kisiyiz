@@ -1,5 +1,5 @@
 import 'package:kackisiyiz_panel/add_survey/common/add_survey_api_service.dart';
-import 'package:kackisiyiz_panel/add_survey/common/models/category_model.dart';
+import 'package:kackisiyiz_panel/core/models/category_model.dart';
 import 'package:kackisiyiz_panel/core/app/base_view_model.dart';
 import 'common/models/add_survey_model.dart';
 

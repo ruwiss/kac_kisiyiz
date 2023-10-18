@@ -1,5 +1,5 @@
 import 'package:kackisiyiz_panel/core/services/http_service.dart';
-import '../../add_survey/common/models/category_model.dart';
+import '../models/category_model.dart';
 import '../constants/hosts.dart';
 
 class CategoryApiService {

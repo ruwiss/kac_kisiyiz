@@ -38,7 +38,6 @@ class _SurveyWidgetState extends State<SurveyWidget> {
     return InkWell(
       borderRadius: BorderRadius.circular(8),
       onTap: () => _showButtonsVisibility(),
-      mouseCursor: MouseCursor.defer,
       onHover: (value) => _showButtonsVisibility(value: value, isHover: true),
       child: Stack(
         children: [
