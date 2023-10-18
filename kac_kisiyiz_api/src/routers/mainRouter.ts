@@ -5,7 +5,7 @@ import { RowDataPacket, ResultSetHeader } from "mysql2";
 
 function routes(router: Router, root: Connector): Router {
   const helper = new ExpressHelper();
-
+  
   //  -------------------- GETTER --------------------  //
 
   router.get("/settings", (req, res) => {

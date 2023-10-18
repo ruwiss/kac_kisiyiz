@@ -11,25 +11,28 @@ class PaymentsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BaseView<PaymentsViewModel>(
       onModelReady: (model) => model.getTopUsers(),
-      builder: (context, model, child) => Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Center(
-            child: Column(
-              children: [
-                const Text(
-                  "Top 5 Kullanıcı",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
+      builder: (context, model, child) => SafeArea(
+        child: Scaffold(
+          body: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Center(
+              child: Column(
+                children: [
+                  const Text(
+                    "Top 5 Kullanıcı",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-                model.state == ViewState.busy
-                    ? const Text("Bekleyiniz..")
-                    : model.topUsers == null
-                        ? const Text("Bir sorun oluştu")
-                        : _listWidget(model)
-              ],
+                  const SizedBox(height: 10),
+                  model.state == ViewState.busy
+                      ? const Text("Bekleyiniz..")
+                      : model.topUsers == null
+                          ? const Text("Bir sorun oluştu")
+                          : _listWidget(model)
+                ],
+              ),
             ),
           ),
         ),
@@ -53,14 +56,14 @@ class PaymentsView extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SelectableText("${topUserModel.nameSurname ?? topUserModel.name}  ${topUserModel.mail}\nPara: ${topUserModel.money} ₺  Oy Sayısı: ${topUserModel.voteCount}\nBanka: ${topUserModel.bankName}  IBAN: ${topUserModel.iban}"),
+                      SelectableText("${topUserModel.nameSurname ?? topUserModel.name}  ${topUserModel.mail}\nPara: ${topUserModel.money} TL  Oy Sayısı: ${topUserModel.voteCount}\nBanka: ${topUserModel.bankName}  IBAN: ${topUserModel.iban}".replaceAll("null", "Yok")),
                       const SizedBox(height: 10),
                       Align(
                         alignment: Alignment.centerRight,
-                        child: ElevatedButton(
+                        child: OutlinedButton(
                           onPressed: () => model.paymentCompleted(topUserModel),
                           child: const Text(
-                            "Ödeme Yapıldı",
+                            "Ödül Ver",
                             style: TextStyle(fontSize: 14),
                           ),
                         ),

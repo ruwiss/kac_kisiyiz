@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kackisiyiz_panel/login/login_view_model.dart';
@@ -11,6 +13,18 @@ class LoginView extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
   final _tMail = TextEditingController();
   final _tPassword = TextEditingController();
+
+  void _login(BuildContext context, LoginViewModel model) async {
+    if (_formKey.currentState!.validate()) {
+      if (await model.login(_tMail.text, _tPassword.text)) {
+        if (context.mounted) {
+          context.pushReplacementNamed("add");
+        }
+      } else {
+        model.setInfoText("Yanlış bilgi verdiniz.");
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,24 +41,18 @@ class LoginView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 TextFieldInput(hint: "E-Posta", controller: _tMail),
-                TextFieldInput(
-                    hint: "Şifreniz", obscured: true, controller: _tPassword),
+                TextFieldInput(hint: "Şifreniz", obscured: true, controller: _tPassword),
                 if (model.infoText != null) Text(model.infoText!),
                 const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      if (await model.login(_tMail.text, _tPassword.text)) {
-                        if (context.mounted) {
-                          context.pushReplacementNamed("add");
-                        }
-                      } else {
-                        model.setInfoText("Yanlış bilgi verdiniz.");
-                      }
-                    }
-                  },
-                  child: const Text('Giriş Yap'),
-                ),
+                Platform.isAndroid
+                    ? OutlinedButton(
+                        onPressed: () => _login(context, model),
+                        child: const Text('Giriş Yap'),
+                      )
+                    : ElevatedButton(
+                        onPressed: () => _login(context, model),
+                        child: const Text('Giriş Yap'),
+                      ),
               ],
             ),
           ),

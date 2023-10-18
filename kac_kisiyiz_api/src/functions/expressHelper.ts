@@ -66,7 +66,7 @@ export class ExpressHelper {
     const msToMin = msBetweenDates / 60000;
     return msToMin < 10;
   }
-
+  
   randomNumber(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:kackisiyiz_panel/core/extensions/context_extensions.dart';
 import 'package:kackisiyiz_panel/core/extensions/string_extensions.dart';
@@ -49,96 +51,86 @@ class _AddSurveyViewState extends State<AddSurveyView> {
     }
   }
 
+  void _publishSurvey(AddSurveyViewModel model) async {
+    if (_formKey.currentState!.validate()) {
+      final category = model.selectedCategory;
+      if (category == null) return;
+      final addSurveyModel = AddSurveyModel(id: widget.surveyModel?.id, categoryId: category.id!, title: _tTitle.text, content: _tContent.text, image: _tImage.text, adLink: _tAdLink.text, reward: _tReward.text, uid: _tUserId.text);
+      if (await model.addSurvey(addSurveyModel)) {
+        _clearFields();
+        model.setSelectedCategory(null);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BaseView<AddSurveyViewModel>(
       onModelReady: (model) => _getModel(model),
-      builder: (context, model, child) => Scaffold(
-        body: Center(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(30),
-                  child: Text('Anket Ekle', style: context.titleStyle),
-                ),
-                Container(
-                  color: Colors.white.withOpacity(.03),
-                  padding: const EdgeInsets.all(15),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        _dropdownButton(model),
-                        const SizedBox(height: 20),
-                        TextFieldInput(
-                          hint: 'Başlık',
-                          controller: _tTitle,
-                          suffix: const Text(" ...Kaç Kişiyiz?"),
-                        ),
-                        TextFieldInput(
-                          hint: 'İçerik',
-                          controller: _tContent,
-                          multiLine: true,
-                        ),
-                        TextFieldInput(hint: 'Resim', controller: _tImage),
-                        const SizedBox(height: 25),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Flexible(
-                              child: TextFieldInput(
-                                  dontValidate: true,
-                                  hint: 'UID',
-                                  controller: _tUserId),
-                            ),
-                            Flexible(
-                              flex: 2,
-                              child: TextFieldInput(
-                                  dontValidate: true,
-                                  hint: 'Reklam URL',
-                                  controller: _tAdLink),
-                            ),
-                            Flexible(
-                              child: TextFieldInput(
-                                  dontValidate: true,
-                                  hint: 'Ödül',
-                                  controller: _tReward),
-                            ),
-                          ],
-                        ),
-                        if (model.infoText != null)
-                          Text(model.infoText!, textAlign: TextAlign.center),
-                        const SizedBox(height: 20),
-                        ElevatedButton(
-                          onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              final category = model.selectedCategory;
-                              if (category == null) return;
-                              final addSurveyModel = AddSurveyModel(
-                                  id: widget.surveyModel?.id,
-                                  categoryId: category.id!,
-                                  title: _tTitle.text,
-                                  content: _tContent.text,
-                                  image: _tImage.text,
-                                  adLink: _tAdLink.text,
-                                  reward: _tReward.text,
-                                  uid: _tUserId.text);
-                              if (await model.addSurvey(addSurveyModel)) {
-                                _clearFields();
-                                model.setSelectedCategory(null);
-                              }
-                            }
-                          },
-                          child: const Text('Yayınla'),
-                        )
-                      ],
+      builder: (context, model, child) => SafeArea(
+        child: Scaffold(
+          body: Center(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: Text('Anket Ekle', style: context.titleStyle),
+                  ),
+                  Container(
+                    color: Colors.white.withOpacity(.03),
+                    padding: const EdgeInsets.all(15),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          _dropdownButton(model),
+                          const SizedBox(height: 20),
+                          TextFieldInput(
+                            hint: 'Başlık',
+                            controller: _tTitle,
+                            suffix: const Text(" ...Kaç Kişiyiz?"),
+                          ),
+                          TextFieldInput(
+                            hint: 'İçerik',
+                            controller: _tContent,
+                            multiLine: true,
+                          ),
+                          TextFieldInput(hint: 'Resim', controller: _tImage),
+                          const SizedBox(height: 25),
+                          Flexible(
+                            child: TextFieldInput(dontValidate: true, hint: 'Reklam URL', controller: _tAdLink),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Flexible(
+                                child: TextFieldInput(dontValidate: true, hint: 'UID', controller: _tUserId),
+                              ),
+                              Flexible(
+                                child: TextFieldInput(dontValidate: true, hint: 'Ödül', controller: _tReward),
+                              ),
+                            ],
+                          ),
+                          if (model.infoText != null) Text(model.infoText!, textAlign: TextAlign.center),
+                          const SizedBox(height: 20),
+                          Platform.isAndroid
+                              ? OutlinedButton(
+                                  onPressed: () => _publishSurvey(model),
+                                  child: const Text("Yayınla"),
+                                )
+                              : ElevatedButton(
+                                  onPressed: () => _publishSurvey(model),
+                                  child: const Text("Yayınla"),
+                                ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

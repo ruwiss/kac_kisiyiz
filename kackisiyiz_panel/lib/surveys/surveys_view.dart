@@ -33,51 +33,53 @@ class _SurveysViewState extends State<SurveysView> {
   Widget build(BuildContext context) {
     return BaseView<SurveysViewModel>(
       onModelReady: (model) => model.getSurveys(selectedFilter: _selectedFilter),
-      builder: (context, model, child) => Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.all(25),
-          child: model.state == ViewState.busy
-              ? const Text("Bekleyiniz..")
-              : model.surveys == null
-                  ? const Text("Bir sorun oluştu")
-                  : Column(
-                      children: [
-                        TextFieldInput(
-                          hint: "Arama yap",
-                          controller: _tSearch,
-                          suffixIcon: IconButton(
-                            onPressed: () {
-                              if (_tSearch.text.isNotEmpty) {
-                                model.getSurveys(searchText: _tSearch.text, selectedFilter: _selectedFilter);
-                              }
-                            },
-                            icon: const Icon(Icons.search, size: 20),
+      builder: (context, model, child) => SafeArea(
+        child: Scaffold(
+          body: Padding(
+            padding: const EdgeInsets.all(25),
+            child: model.state == ViewState.busy
+                ? const Center(child: Text("Bekleyiniz.."))
+                : model.surveys == null
+                    ? const Text("Bir sorun oluştu")
+                    : Column(
+                        children: [
+                          TextFieldInput(
+                            hint: "Arama yap",
+                            controller: _tSearch,
+                            suffixIcon: IconButton(
+                              onPressed: () {
+                                if (_tSearch.text.isNotEmpty) {
+                                  model.getSurveys(searchText: _tSearch.text, selectedFilter: _selectedFilter);
+                                }
+                              },
+                              icon: const Icon(Icons.search, size: 20),
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            const Text("Öncelik Durumu: "),
-                            _filterButton(SelectedFilter.pending, "Gönderilenler"),
-                            _filterButton(SelectedFilter.rewarded, "Ödüllü Anketler"),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                        _listWidget(model),
-                      ],
-                    ),
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              _filterButton(SelectedFilter.pending, "Gönderilenler"),
+                              _filterButton(SelectedFilter.rewarded, "Ödüllü Anketler"),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                          _listWidget(model),
+                        ],
+                      ),
+          ),
         ),
       ),
     );
   }
 
   ElevatedButton _filterButton(SelectedFilter filter, String text) => ElevatedButton(
-      onPressed: _selectedFilter == filter ? null : () => _setSelectedFilter(filter),
-      child: Text(
-        text,
-        style: const TextStyle(fontSize: 15),
-      ));
+        onPressed: _selectedFilter == filter ? null : () => _setSelectedFilter(filter),
+        child: Text(
+          text,
+          style: const TextStyle(fontSize: 13),
+        ),
+      );
 
   Flexible _listWidget(SurveysViewModel model) {
     return Flexible(

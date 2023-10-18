@@ -25,7 +25,7 @@ class TextFieldInput extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       constraints: const BoxConstraints(maxWidth: 400),
-      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
       child: TextFormField(
         validator: (value) {
           if (value == null || value.isEmpty && !dontValidate) {
@@ -38,13 +38,11 @@ class TextFieldInput extends StatelessWidget {
         maxLines: multiLine ? 5 : 1,
         decoration: InputDecoration(
           suffix: suffix,
-          suffixIcon: Padding(
-              padding: const EdgeInsets.only(right: 10), child: suffixIcon),
+          suffixIcon: Padding(padding: const EdgeInsets.only(right: 10), child: suffixIcon),
           filled: true,
           fillColor: context.secondaryColor,
           hintText: hint,
-          contentPadding: EdgeInsets.symmetric(
-              horizontal: 18, vertical: multiLine ? 15 : 8),
+          contentPadding: EdgeInsets.symmetric(horizontal: 18, vertical: multiLine ? 15 : 8),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
         ),
       ),

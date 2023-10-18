@@ -13,16 +13,18 @@ class CategoriesView extends StatelessWidget {
     return BaseView<CategoriesViewModel>(
       onModelReady: (model) => model.getCategories(),
       builder: (context, model, child) {
-        return Scaffold(
-          body: model.state == ViewState.busy
-              ? const Text("Bekleyiniz..")
-              : model.categories == null
-                  ? const Text("Bir sorun oluştu")
-                  : Column(
-                      children: [
-                        _listWidget(model),
-                      ],
-                    ),
+        return SafeArea(
+          child: Scaffold(
+            body: model.state == ViewState.busy
+                ? const Center(child: Text("Bekleyiniz.."))
+                : model.categories == null
+                    ? const Text("Bir sorun oluştu")
+                    : Column(
+                        children: [
+                          _listWidget(model),
+                        ],
+                      ),
+          ),
         );
       },
     );
@@ -51,8 +53,7 @@ class CategoriesView extends StatelessWidget {
             ],
           );
         },
-        separatorBuilder: (context, index) =>
-            const Divider(color: Colors.white12, height: 0),
+        separatorBuilder: (context, index) => const Divider(color: Colors.white12, height: 0),
       ),
     );
   }

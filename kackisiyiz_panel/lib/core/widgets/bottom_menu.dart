@@ -15,34 +15,30 @@ class BottomMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isAndroid = MediaQuery.of(context).size.width < 500;
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(isAndroid ? 5 : 20),
+      width: double.infinity,
+      alignment: Alignment.center,
       decoration: BoxDecoration(color: context.secondaryColor),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          TextButton.icon(
-            onPressed: () => _navigation(context, 'add'),
-            icon: const Icon(Icons.article),
-            label: const Text('Ekle'),
-          ),
-          TextButton.icon(
-            onPressed: () => _navigation(context, 'surveys'),
-            icon: const Icon(Icons.article_outlined),
-            label: const Text('Eklenenler'),
-          ),
-          TextButton.icon(
-            onPressed: () =>  _navigation(context, 'categories'),
-            icon: const Icon(Icons.menu),
-            label: const Text('Kategori'),
-          ),
-          TextButton.icon(
-            onPressed: () => _navigation(context, 'payments'),
-            icon: const Icon(Icons.payment),
-            label: const Text('Ödemeler'),
-          ),
+          _bottomMenuItem(context, page: 'add', text: 'Ekle', icon: Icons.article),
+          _bottomMenuItem(context, page: 'surveys', text: 'Anketler', icon: Icons.article_outlined),
+          _bottomMenuItem(context, page: 'categories', text: 'Kategoriler', icon: Icons.menu),
+          _bottomMenuItem(context, page: 'payments', text: 'Ödemeler', icon: Icons.payment),
         ],
       ),
+    );
+  }
+
+  TextButton _bottomMenuItem(BuildContext context, {required String page, required String text, required IconData icon}) {
+    final bool isAndroid = MediaQuery.of(context).size.width < 500;
+    return TextButton.icon(
+      onPressed: () => _navigation(context, page),
+      icon: Icon(icon, size: isAndroid ? 24 : null),
+      label: Text(isAndroid ? "" : text),
     );
   }
 }
