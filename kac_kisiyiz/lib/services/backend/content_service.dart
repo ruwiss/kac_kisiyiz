@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:kac_kisiyiz/locator.dart';
@@ -24,12 +25,10 @@ class ContentService {
   String? privacyPolicy;
   late List<SettingsModel> settings;
   int voteCounter = 0;
-  final interstitialAd =
-      InterstitialAdManager(adUnitId: KStrings.insertstitialId);
+  final interstitialAd = InterstitialAdManager(adUnitId: KStrings.insertstitialId);
 
   Future getSettings() async {
-    final response = await _httpService.request(
-        url: KStrings.settings, method: HttpMethod.get);
+    final response = await _httpService.request(url: KStrings.settings, method: HttpMethod.get);
     if (response != null && response.statusCode == 200) {
       List<SettingsModel> items = [];
       for (var i in response.data) {
@@ -41,19 +40,20 @@ class ContentService {
 
   void _checkForAd(BuildContext context) {
     voteCounter++;
-    final limit =
-        settings.singleWhere((e) => e.name == "surveyAdDisplayCount").attr;
+    final limit = settings.singleWhere((e) => e.name == "surveyAdDisplayCount").attr;
     if (voteCounter >= int.parse(limit)) {
-      Utils.startLoading(context, text: "Reklam Bekleniyor");
       interstitialAd.load(
         onLoaded: (ad) {
           voteCounter = 0;
-          Utils.stopLoading(context);
+          Utils.startLoading(context, text: "Reklam Bekleniyor");
+          Timer.periodic(const Duration(seconds: 1), (timer) {
+            Utils.stopLoading(context);
+            timer.cancel();
+          });
           ad.show();
         },
         onError: () {
           voteCounter--;
-          Utils.stopLoading(context);
         },
       );
     }
@@ -70,9 +70,7 @@ class ContentService {
     );
 
     if (response != null && response.statusCode == 200) {
-      final items = (response.data as List)
-          .map((e) => CategoryModel.fromJson(e))
-          .toList();
+      final items = (response.data as List).map((e) => CategoryModel.fromJson(e)).toList();
       homeProvider.setCategories(items);
     }
   }
@@ -84,22 +82,23 @@ class ContentService {
     if (voted) {
       if (homeProvider.votedSurveys.isNotEmpty) return;
       homeProvider.setLoading(true);
-      data = {"voted": true};
+      data = {
+        "voted": true
+      };
     } else if (category) {
-      if (homeProvider.categorySurveys
-          .containsKey(homeProvider.currentCategoryId)) return;
+      if (homeProvider.categorySurveys.containsKey(homeProvider.currentCategoryId)) return;
       homeProvider.setLoading(true);
-      data = {"categoryId": homeProvider.currentCategoryId};
+      data = {
+        "categoryId": homeProvider.currentCategoryId
+      };
     } else {
       if (homeProvider.surveys.isNotEmpty) return;
       homeProvider.setLoading(true);
     }
-    final response = await _httpService.request(
-        url: KStrings.fetchSurveys, method: HttpMethod.get, data: data);
+    final response = await _httpService.request(url: KStrings.fetchSurveys, method: HttpMethod.get, data: data);
 
     if (response != null && response.statusCode == 200) {
-      final items =
-          (response.data as List).map((e) => SurveyModel.fromJson(e)).toList();
+      final items = (response.data as List).map((e) => SurveyModel.fromJson(e)).toList();
       if (voted) {
         homeProvider.setVotedSurveys(items);
       } else if (category) {
@@ -111,27 +110,21 @@ class ContentService {
   }
 
   Future<bool> _addAmountDatabase({required double amount}) async {
-    final response = await _httpService.request(
-        url: KStrings.patchMoney,
-        method: HttpMethod.patch,
-        data: {"moneyAmount": amount});
+    final response = await _httpService.request(url: KStrings.patchMoney, method: HttpMethod.patch, data: {
+      "moneyAmount": amount
+    });
     return response != null && response.statusCode == 200;
   }
 
-  Future voteSurvey(BuildContext context,
-      {required SurveyModel surveyModel, required SurveyChoices choice}) async {
+  Future voteSurvey(BuildContext context, {required SurveyModel surveyModel, required SurveyChoices choice}) async {
     final homeProvier = locator.get<HomeProvider>();
     final userModel = locator.get<AuthService>().resultData.user;
-    showConfirmDialog(Function() onConfirm) => Utils.showConfirmDialog(context,
-        title: "Bilgi",
-        message: "Bu konuyla ilgili bir makale var. Okumak ister misin?",
-        onConfirm: onConfirm,
-        buttonColor: KColors.primary);
+    showConfirmDialog(Function() onConfirm) => Utils.showConfirmDialog(context, title: "Bilgi", message: "Bu konuyla ilgili bir makale var. Okumak ister misin?", onConfirm: onConfirm, buttonColor: KColors.primary);
 
-    final response = await _httpService.request(
-        url: KStrings.patchSurvey,
-        method: HttpMethod.patch,
-        data: {"id": surveyModel.id, "vote": choice.name});
+    final response = await _httpService.request(url: KStrings.patchSurvey, method: HttpMethod.patch, data: {
+      "id": surveyModel.id,
+      "vote": choice.name
+    });
 
     if (response != null && response.statusCode == 200) {
       userModel!.voteCount++;
@@ -164,15 +157,12 @@ class ContentService {
 
     Utils.startLoading(context);
 
-    final response = await _httpService.request(
-        url: KStrings.postSurvey,
-        method: HttpMethod.post,
-        data: {
-          "categoryId": categoryId,
-          "title": title,
-          "content": content,
-          "isPending": true
-        });
+    final response = await _httpService.request(url: KStrings.postSurvey, method: HttpMethod.post, data: {
+      "categoryId": categoryId,
+      "title": title,
+      "content": content,
+      "isPending": true
+    });
     if (response != null && response.statusCode == 200) {
       showInfo("Anketiniz inceleme için gönderildi.");
       navigator.pop();
@@ -194,17 +184,17 @@ class ContentService {
 
     Utils.startLoading(context);
 
-    final response = await _httpService.request(
-        url: KStrings.bankAccount,
-        method: HttpMethod.post,
-        data: {"nameSurname": nameSurname, "bankName": bankName, "iban": iban});
+    final response = await _httpService.request(url: KStrings.bankAccount, method: HttpMethod.post, data: {
+      "nameSurname": nameSurname,
+      "bankName": bankName,
+      "iban": iban
+    });
 
     if (response != null && response.statusCode == 200) {
       final authResponse = locator.get<AuthService>().resultData;
       final myDB = locator.get<MyDB>();
 
-      authResponse.user!.bankAccount =
-          UserBankModel(nameSurname, bankName, iban);
+      authResponse.user!.bankAccount = UserBankModel(nameSurname, bankName, iban);
       myDB.saveUser(authResponse);
       navigator.pop();
       showInfo(response.data['msg']);
@@ -217,12 +207,10 @@ class ContentService {
     final myDB = locator.get<MyDB>();
 
     if (authResponse.user!.bankAccount == null) {
-      final response = await _httpService.request(
-          url: KStrings.bankAccount, method: HttpMethod.get);
+      final response = await _httpService.request(url: KStrings.bankAccount, method: HttpMethod.get);
       if (response != null && response.statusCode == 200) {
         if ((response.data as Map).isNotEmpty) {
-          authResponse.user!.bankAccount =
-              UserBankModel.fromJson(response.data);
+          authResponse.user!.bankAccount = UserBankModel.fromJson(response.data);
           myDB.saveUser(authResponse);
         }
       }
@@ -236,8 +224,7 @@ class ContentService {
 
     final navigator = Navigator.of(context);
 
-    final response = await _httpService.request(
-        url: KStrings.bankAccount, method: HttpMethod.delete);
+    final response = await _httpService.request(url: KStrings.bankAccount, method: HttpMethod.delete);
 
     if (response != null && response.statusCode == 200) {
       authResponse.user!.bankAccount = null;
@@ -251,8 +238,7 @@ class ContentService {
     if (privacyPolicy != null) {
       return privacyPolicy!;
     }
-    final response = await _dio.get(KStrings.privacyPolicy,
-        options: Options(responseType: ResponseType.plain));
+    final response = await _dio.get(KStrings.privacyPolicy, options: Options(responseType: ResponseType.plain));
     if (response.statusCode == 200) {
       String data = response.data;
       if (data.contains("<!-- 1 -->")) {
@@ -266,8 +252,7 @@ class ContentService {
 
   Future deleteUserAccount(BuildContext context) async {
     final navigator = Navigator.of(context);
-    final response = await _httpService.request(
-        url: KStrings.deleteUser, method: HttpMethod.delete);
+    final response = await _httpService.request(url: KStrings.deleteUser, method: HttpMethod.delete);
     if (response != null && response.statusCode == 200) {
       final homeProvider = locator.get<HomeProvider>();
 
@@ -275,7 +260,7 @@ class ContentService {
 
       locator.unregister<AuthService>();
       locator.unregister<ContentService>();
-  
+
       locator.registerSingleton<AuthService>(AuthService());
       locator.registerSingleton<ContentService>(ContentService());
 
@@ -286,8 +271,7 @@ class ContentService {
     }
   }
 
-  Future changeUserInformation(BuildContext context, Map<String, dynamic> data,
-      {Function(String)? onError}) async {
+  Future changeUserInformation(BuildContext context, Map<String, dynamic> data, {Function(String)? onError}) async {
     if (data.isEmpty) return;
     final navigator = Navigator.of(context);
     final authResponse = locator.get<AuthService>().resultData;
