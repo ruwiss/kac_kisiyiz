@@ -1,10 +1,11 @@
 import 'package:kackisiyiz_panel/core/app/locator.dart';
 import 'package:kackisiyiz_panel/core/services/category_api_service.dart';
+import 'package:kackisiyiz_panel/core/services/send_notification.dart';
 import '../../core/constants/hosts.dart';
 import '../../core/services/http_service.dart';
 import 'models/add_survey_model.dart';
 
-class AddSurveyApiService extends CategoryApiService{
+class AddSurveyApiService extends CategoryApiService {
   final _http = locator<HttpService>();
 
   Future<bool> patchSurvey(AddSurveyModel addSurveyModel) async {
@@ -16,5 +17,13 @@ class AddSurveyApiService extends CategoryApiService{
       data: addSurveyModel.toJson(),
     );
     return response?.statusCode == 200;
+  }
+
+  Future<void> sendNotificationToUser(AddSurveyModel addSurveyModel) async {
+    await SendNotification.toUser(
+        user: addSurveyModel.onesignalId,
+        heading: "Anketiniz onaylandı",
+        content:
+            "Gönderdiğiniz anket için teşekkür ederiz. Anketiniz yayınlandı.");
   }
 }

@@ -55,8 +55,18 @@ class _AddSurveyViewState extends State<AddSurveyView> {
     if (_formKey.currentState!.validate()) {
       final category = model.selectedCategory;
       if (category == null) return;
-      final addSurveyModel = AddSurveyModel(id: widget.surveyModel?.id, categoryId: category.id!, title: _tTitle.text, content: _tContent.text, image: _tImage.text, adLink: _tAdLink.text, reward: _tReward.text, uid: _tUserId.text);
-      if (await model.addSurvey(addSurveyModel)) {
+      final addSurveyModel = AddSurveyModel(
+        id: widget.surveyModel?.id,
+        categoryId: category.id!,
+        title: _tTitle.text,
+        content: _tContent.text,
+        image: _tImage.text,
+        adLink: _tAdLink.text,
+        reward: _tReward.text,
+        uid: _tUserId.text,
+        onesignalId: widget.surveyModel?.onesignalId,
+      );
+      if (await model.addSurvey(context, addSurveyModel)) {
         _clearFields();
         model.setSelectedCategory(null);
       }
@@ -100,19 +110,29 @@ class _AddSurveyViewState extends State<AddSurveyView> {
                           ),
                           TextFieldInput(hint: 'Resim', controller: _tImage),
                           const SizedBox(height: 25),
-                          TextFieldInput(dontValidate: true, hint: 'Reklam URL', controller: _tAdLink),
+                          TextFieldInput(
+                              dontValidate: true,
+                              hint: 'Reklam URL',
+                              controller: _tAdLink),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Flexible(
-                                child: TextFieldInput(dontValidate: true, hint: 'UID', controller: _tUserId),
+                                child: TextFieldInput(
+                                    dontValidate: true,
+                                    hint: 'UID',
+                                    controller: _tUserId),
                               ),
                               Flexible(
-                                child: TextFieldInput(dontValidate: true, hint: 'Ödül', controller: _tReward),
+                                child: TextFieldInput(
+                                    dontValidate: true,
+                                    hint: 'Ödül',
+                                    controller: _tReward),
                               ),
                             ],
                           ),
-                          if (model.infoText != null) Text(model.infoText!, textAlign: TextAlign.center),
+                          if (model.infoText != null)
+                            Text(model.infoText!, textAlign: TextAlign.center),
                           const SizedBox(height: 20),
                           Platform.isAndroid
                               ? OutlinedButton(

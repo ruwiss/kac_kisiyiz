@@ -111,8 +111,11 @@ class AuthService {
     late Response response;
 
     if (isLogin) {
-      response = await _dio.get(KStrings.authUrl,
-          queryParameters: {"mail": mail, "password": password});
+      response = await _dio.get(KStrings.authUrl, queryParameters: {
+        "mail": mail,
+        "password": password,
+        "onesignalId": OneSignal.User.pushSubscription.id
+      });
     } else {
       response = await _dio.post(KStrings.authUrl, data: {
         "name": name,

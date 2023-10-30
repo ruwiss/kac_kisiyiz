@@ -5,6 +5,7 @@ class SurveyModel {
     required this.categoryId,
     required this.userId,
     this.userName,
+    this.onesignalId,
     required this.title,
     required this.content,
     this.imageUrl,
@@ -19,6 +20,7 @@ class SurveyModel {
   final String category;
   final int categoryId;
   final int userId;
+  final String? onesignalId;
   String? userName;
   final String title;
   final String content;
@@ -35,6 +37,7 @@ class SurveyModel {
         categoryId = json['categoryId'],
         userId = json['userId'],
         userName = json['userName'],
+        onesignalId = json['onesignalId'],
         title = json['title'],
         content = json['content'],
         imageUrl = json['image'],
@@ -42,7 +45,9 @@ class SurveyModel {
         choice2 = json['ch2'],
         adLink = json['adLink'],
         isPending = json['isPending'] == 1,
-        isRewarded = json['isRewarded'].runtimeType == int ? (json['isRewarded'] as int).toDouble() : json['isRewarded'];
+        isRewarded = json['isRewarded'].runtimeType == int
+            ? (json['isRewarded'] as int).toDouble()
+            : json['isRewarded'];
 
   Map<String, String> toJsonString() => {
         "id": "$id",
@@ -50,6 +55,7 @@ class SurveyModel {
         "categoryId": "$categoryId",
         "userId": "$userId",
         "userName": userName ?? "",
+        "onesignalId": "$onesignalId",
         "title": title,
         "content": content,
         "image": "$imageUrl",
@@ -66,6 +72,8 @@ class SurveyModel {
         categoryId = int.parse(json['categoryId']!),
         userId = int.parse(json['userId']!),
         userName = json['userName']!,
+        onesignalId =
+            json['onesignalId'] == "null" ? null : json['onesignalId'],
         title = json['title']!,
         content = json['content']!,
         imageUrl = json['image']! == "null" ? null : json['image']!,

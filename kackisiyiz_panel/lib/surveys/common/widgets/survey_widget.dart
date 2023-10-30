@@ -72,10 +72,15 @@ class _SurveyWidgetState extends State<SurveyWidget> {
                 padding: const EdgeInsets.all(3),
                 child: Row(
                   children: [
-                    if (rewarded != null && rewarded != 0.0) Text("$rewarded ₺"),
+                    if (rewarded != null && rewarded != 0.0)
+                      Text("$rewarded ₺"),
                     IconButton(
                       onPressed: () {
-                        context.pushReplacement(Uri(path: "/addSurvey", queryParameters: widget.surveyModel.toJsonString()).toString());
+                        context.pushReplacement(Uri(
+                                path: "/addSurvey",
+                                queryParameters:
+                                    widget.surveyModel.toJsonString())
+                            .toString());
                       },
                       icon: const Icon(Icons.article, size: 17),
                     ),
@@ -83,7 +88,8 @@ class _SurveyWidgetState extends State<SurveyWidget> {
                       onPressed: () {
                         if (widget.onDelete != null) widget.onDelete!();
                       },
-                      icon: const Icon(Icons.close, size: 17, color: Colors.red),
+                      icon:
+                          const Icon(Icons.close, size: 17, color: Colors.red),
                     ),
                   ],
                 ),

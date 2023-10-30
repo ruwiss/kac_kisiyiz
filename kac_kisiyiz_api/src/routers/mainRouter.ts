@@ -119,7 +119,7 @@ function routes(router: Router, root: Connector): Router {
       const extra = !keys.includes("search")
         ? ""
         : `WHERE s.title LIKE '%${args.search}%'`;
-      sql = `SELECT s.*,  c.name AS category, u.name AS userName
+      sql = `SELECT s.*,  c.name AS category, u.name AS userName, u.onesignalId AS onesignalId
       FROM surveys s
       LEFT JOIN categories c ON s.categoryId = c.id
       LEFT JOIN users u ON s.userId = u.id
@@ -434,6 +434,7 @@ function routes(router: Router, root: Connector): Router {
 
     if (!helper.listContainsList(keys, requirements))
       return helper.sendErrorMissingData(res);
+
     const sql = `UPDATE surveys SET categoryId = ?, title = ?, content = ?, image = ?, userId = ?, adLink = ?, isRewarded = ?, isPending = ? WHERE id = ?`;
     const values = [
       args.categoryId,
@@ -448,11 +449,8 @@ function routes(router: Router, root: Connector): Router {
     ];
 
     root.con.query(sql, values, (err) => {
-      if (err) {
-        return helper.sendError(err, res);
-      } else {
-        return res.status(200).json({ msg: "OK" });
-      }
+      if (err) return helper.sendError(err, res); 
+      return res.status(200).json({ msg: "OK" });
     });
   });
 

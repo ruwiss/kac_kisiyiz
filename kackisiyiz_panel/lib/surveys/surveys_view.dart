@@ -7,10 +7,7 @@ import 'package:kackisiyiz_panel/surveys/common/widgets/survey_widget.dart';
 import 'package:kackisiyiz_panel/core/widgets/textfield_input.dart';
 import '../core/app/base_view_model.dart';
 
-enum SelectedFilter {
-  pending,
-  rewarded
-}
+enum SelectedFilter { pending, rewarded }
 
 class SurveysView extends StatefulWidget {
   const SurveysView({super.key});
@@ -32,7 +29,8 @@ class _SurveysViewState extends State<SurveysView> {
   @override
   Widget build(BuildContext context) {
     return BaseView<SurveysViewModel>(
-      onModelReady: (model) => model.getSurveys(selectedFilter: _selectedFilter),
+      onModelReady: (model) =>
+          model.getSurveys(selectedFilter: _selectedFilter),
       builder: (context, model, child) => SafeArea(
         child: Scaffold(
           body: Padding(
@@ -44,24 +42,34 @@ class _SurveysViewState extends State<SurveysView> {
                         ? const Text("Bir sorun oluştu")
                         : Column(
                             children: [
-                              TextFieldInput(
-                                hint: "Arama yap",
-                                controller: _tSearch,
-                                suffixIcon: IconButton(
-                                  onPressed: () {
-                                    if (_tSearch.text.isNotEmpty) {
-                                      model.getSurveys(searchText: _tSearch.text, selectedFilter: _selectedFilter);
-                                    }
-                                  },
-                                  icon: const Icon(Icons.search, size: 20),
-                                ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Flexible(
+                                    child: TextFieldInput(
+                                        hint: "Arama yap",
+                                        controller: _tSearch),
+                                  ),
+                                  IconButton(
+                                      onPressed: () {
+                                        if (_tSearch.text.isNotEmpty) {
+                                          model.getSurveys(
+                                              searchText: _tSearch.text,
+                                              selectedFilter: _selectedFilter);
+                                        }
+                                      },
+                                      icon: const Icon(Icons.search))
+                                ],
                               ),
                               const SizedBox(height: 10),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  _filterButton(SelectedFilter.pending, "Gönderilenler"),
-                                  _filterButton(SelectedFilter.rewarded, "Ödüllü Anketler"),
+                                  _filterButton(
+                                      SelectedFilter.pending, "Gönderilenler"),
+                                  _filterButton(SelectedFilter.rewarded,
+                                      "Ödüllü Anketler"),
                                 ],
                               ),
                               const SizedBox(height: 20),
@@ -74,8 +82,10 @@ class _SurveysViewState extends State<SurveysView> {
     );
   }
 
-  ElevatedButton _filterButton(SelectedFilter filter, String text) => ElevatedButton(
-        onPressed: _selectedFilter == filter ? null : () => _setSelectedFilter(filter),
+  ElevatedButton _filterButton(SelectedFilter filter, String text) =>
+      ElevatedButton(
+        onPressed:
+            _selectedFilter == filter ? null : () => _setSelectedFilter(filter),
         child: Text(
           text,
           style: const TextStyle(fontSize: 13),

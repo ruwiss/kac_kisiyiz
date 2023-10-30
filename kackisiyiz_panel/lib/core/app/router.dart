@@ -12,7 +12,8 @@ import 'package:kackisiyiz_panel/surveys/surveys_view.dart';
 GoRoute transitionGoRoute({
   required String path,
   required String name,
-  required Widget Function(BuildContext context, GoRouterState state) pageBuilder,
+  required Widget Function(BuildContext context, GoRouterState state)
+      pageBuilder,
 }) {
   return GoRoute(
     path: path,
@@ -34,7 +35,10 @@ GoRoute transitionGoRoute({
 final GoRouter router = GoRouter(
   initialLocation: "/login",
   routes: [
-    transitionGoRoute(path: "/login", name: "login", pageBuilder: (context, state) => LoginView()),
+    transitionGoRoute(
+        path: "/login",
+        name: "login",
+        pageBuilder: (context, state) => LoginView()),
     transitionGoRoute(
       path: "/addSurvey",
       name: "add",
@@ -42,13 +46,21 @@ final GoRouter router = GoRouter(
         final args = state.uri.queryParameters;
         SurveyModel? surveyModel;
         if (args.isNotEmpty) surveyModel = SurveyModel.fromJsonString(args);
-
         return AddSurveyView(surveyModel: surveyModel);
       },
     ),
-    transitionGoRoute(path: "/surveys", name: "surveys", pageBuilder: (context, state) => const SurveysView()),
-    transitionGoRoute(path: "/categories", name: "categories", pageBuilder: (context, state) => const CategoriesView()),
-    transitionGoRoute(path: "/payments", name: "payments", pageBuilder: (context, state) => const PaymentsView()),
+    transitionGoRoute(
+        path: "/surveys",
+        name: "surveys",
+        pageBuilder: (context, state) => const SurveysView()),
+    transitionGoRoute(
+        path: "/categories",
+        name: "categories",
+        pageBuilder: (context, state) => const CategoriesView()),
+    transitionGoRoute(
+        path: "/payments",
+        name: "payments",
+        pageBuilder: (context, state) => const PaymentsView()),
   ],
   redirect: (context, state) {
     if (locator<LoginViewModel>().userToken == null) {
